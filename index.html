@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lūdus Latīnus</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Cinzel:wght@500;700&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a single study column like a textbook page — running header with red rule, chapter tabs, one practice "slate" below. */
+:root{
+  --bg:#edf0f3; --surface:#ffffff; --sunk:#f4f6f8; --ink:#1b2230; --muted:#5b6575; --line:#d6dbe3;
+  --accent:#b3261e; --accent-ink:#ffffff; --tint:#f7e7e5; --gold:#9a6b0c; --gold-soft:#f6ecd4;
+  --good:#1d7a48; --good-soft:#e2f3e9; --bad:#b3261e; --bad-soft:#f9e3e1;
+  --display:'Cinzel','Trajan Pro',Georgia,serif;
+  --latin:'Gentium Book Plus','Gentium Plus',Georgia,'Times New Roman',serif;
+  --ui:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11151c; --surface:#1a2029; --sunk:#151a22; --ink:#e8ecf2; --muted:#9aa4b3; --line:#2b3341;
+  --accent:#f0675c; --accent-ink:#1a0c0a; --tint:#2c1d1d; --gold:#e2b552; --gold-soft:#2b2516;
+  --good:#52c58c; --good-soft:#15291f; --bad:#f0675c; --bad-soft:#2f1a19; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#11151c; --surface:#1a2029; --sunk:#151a22; --ink:#e8ecf2; --muted:#9aa4b3; --line:#2b3341;
+  --accent:#f0675c; --accent-ink:#1a0c0a; --tint:#2c1d1d; --gold:#e2b552; --gold-soft:#2b2516;
+  --good:#52c58c; --good-soft:#15291f; --bad:#f0675c; --bad-soft:#2f1a19; color-scheme:dark;}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.latin{font-family:var(--latin)}
+
+/* running header */
+.runhead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--accent);padding-bottom:8px}
+.brand{font-family:var(--display);font-weight:700;letter-spacing:.08em;font-size:1.35rem;line-height:1.1;margin:0}
+.brand small{display:block;font-family:var(--ui);font-weight:400;letter-spacing:.02em;font-size:.82rem;color:var(--muted);margin-top:4px}
+.coins{display:inline-flex;align-items:center;gap:7px;background:var(--gold-soft);color:var(--gold);border-radius:999px;padding:6px 12px;font-weight:700;font-size:.9rem;white-space:nowrap;transition:transform .2s}
+.coins b{font-variant-numeric:tabular-nums;font-size:1.05rem}
+.coins.bump{transform:scale(1.15)}
+.coins svg{width:20px;height:20px}
+
+/* chapters */
+.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:600px){.chips{grid-template-columns:repeat(2,1fr)}}
+.chip{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.chip .cap{font-family:var(--display);font-weight:700;font-size:.78rem;letter-spacing:.1em;color:var(--muted)}
+.chip .ct{font-family:var(--latin);font-style:italic;font-size:1rem;line-height:1.2}
+.chip .bar{display:block;width:100%;height:5px;border-radius:3px;background:var(--line);margin-top:6px;overflow:hidden}
+.chip .bar i{display:block;height:100%;background:var(--good)}
+.chip .pc{font-size:.74rem;color:var(--muted)}
+.chip.on{border-color:var(--accent);background:var(--tint)}
+.chip.on .cap{color:var(--accent)}
+.hintline{font-size:.82rem;color:var(--muted);margin:-8px 0 0}
+
+/* tabs */
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px;font-weight:700;color:var(--muted);white-space:nowrap;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.tab span{font-family:var(--latin);font-style:italic;font-weight:400;font-size:.78rem}
+.tab.on{color:var(--ink);border-bottom-color:var(--accent)}
+
+/* slate */
+.slate{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;min-width:0}
+@media (max-width:480px){.slate{padding:18px 14px}}
+.meta{display:flex;justify-content:space-between;gap:10px;font-size:.85rem;color:var(--muted);flex-wrap:wrap}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:8px 0 18px}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .3s}
+
+.flash{width:100%;min-height:230px;border:1.5px dashed var(--line);background:var(--sunk);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px 16px;text-align:center}
+.big{font-family:var(--latin);font-size:clamp(2.2rem,9vw,3.4rem);line-height:1.1;font-weight:700;overflow-wrap:anywhere}
+.big.en{font-family:var(--ui);font-size:clamp(1.6rem,6vw,2.3rem)}
+.flash .en{font-size:1.4rem;font-weight:700;color:var(--accent)}
+.det{font-size:.95rem;color:var(--muted);max-width:52ch}
+.det b{color:var(--ink);font-weight:700}
+.tap{font-size:.82rem;color:var(--muted)}
+.dots{display:inline-flex;gap:4px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.f{background:var(--good)}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.row.spread{justify-content:space-between}
+.btn{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 16px;font-weight:700;display:inline-flex;align-items:center;gap:8px;min-height:46px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--surface)}
+.btn.ghost{background:none}
+.btn svg{width:18px;height:18px}
+.grow{flex:1 1 160px;justify-content:center}
+
+.prompt{font-size:1.25rem;line-height:1.45;margin:0 0 16px}
+.prompt .latin{font-size:1.35em;font-weight:700}
+.prompt small{display:block;font-size:.85rem;color:var(--muted);margin-top:4px}
+.sentence{font-family:var(--latin);font-size:clamp(1.5rem,5vw,2rem);line-height:1.35;margin:4px 0 6px}
+.blank{display:inline-block;min-width:2.2em;border-bottom:3px solid var(--accent);color:var(--accent);text-align:center;font-weight:700}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.opts{grid-template-columns:1fr}}
+.opt{border:1.5px solid var(--line);background:var(--sunk);border-radius:10px;padding:12px 14px;text-align:left;min-height:54px;display:flex;align-items:center;gap:10px;font-size:1.05rem}
+.opt .k{font-size:.75rem;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 6px;font-variant-numeric:tabular-nums}
+.opt.la{font-family:var(--latin);font-size:1.3rem}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{background:var(--good-soft);border-color:var(--good);color:var(--good);font-weight:700}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.opt:disabled{cursor:default}
+.fb{margin-top:16px;padding:14px 16px;border-radius:10px;background:var(--sunk);border-left:4px solid var(--line)}
+.fb.ok{border-left-color:var(--good)}
+.fb.no{border-left-color:var(--bad)}
+.fb .v{font-weight:700;font-size:1.1rem}
+.fb.ok .v{color:var(--good)} .fb.no .v{color:var(--bad)}
+.fb p{margin:6px 0 0}
+.fb .full{font-family:var(--latin);font-size:1.2rem}
+.typein{display:flex;gap:10px;flex-wrap:wrap}
+.typein input{flex:1 1 200px;font-family:var(--latin);font-size:1.4rem;padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--sunk);color:var(--ink);min-width:0}
+.macrons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.macrons button{font-family:var(--latin);font-size:1.1rem;border:1px solid var(--line);background:var(--surface);border-radius:6px;width:38px;height:36px}
+
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;padding:8px 14px;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--ink);color:var(--surface)}
+
+.drills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.dchip{border:1.5px solid var(--line);background:none;border-radius:999px;padding:6px 12px;font-size:.88rem;font-weight:700;color:var(--muted)}
+.dchip.on{border-color:var(--ink);color:var(--ink);background:var(--sunk)}
+
+.tips{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;width:100%;max-width:520px;text-align:left}
+.tips li{display:flex;gap:12px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
+.tips b{font-family:var(--latin);font-size:1.15rem;min-width:3.2em;color:var(--accent)}
+
+.result{text-align:center;padding:10px 0}
+.result .score{font-family:var(--display);font-size:3rem;font-weight:700;font-variant-numeric:tabular-nums}
+.result .verdict{font-family:var(--latin);font-style:italic;font-size:1.6rem;color:var(--accent)}
+.missed{list-style:none;padding:0;margin:18px auto 0;max-width:460px;text-align:left;display:grid;gap:6px}
+.missed li{background:var(--sunk);border-radius:8px;padding:8px 12px;font-size:.95rem}
+.pzbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pzttl{font-family:var(--display);font-weight:700;letter-spacing:.1em;color:var(--accent);margin:0 0 4px;font-size:1.05rem}
+.pzint{color:var(--muted);margin:0 0 14px}
+.para{font-family:var(--latin);font-size:1.3rem;line-height:2.3;margin:0 0 12px;overflow-wrap:anywhere}
+.para p{margin:0 0 10px}
+.gap{font-family:var(--latin);font-size:1em;border:0;border-bottom:2px solid var(--accent);background:var(--tint);color:var(--ink);text-align:center;padding:0 3px;border-radius:4px 4px 0 0;max-width:100%}
+.gap.ok{border-bottom-color:var(--good);background:var(--good-soft);color:var(--good);font-weight:700}
+.gap.no{border-bottom-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.fix{font-family:var(--latin);font-size:.75em;color:var(--good);font-weight:700;margin-left:2px;vertical-align:super}
+.bank{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border:1.5px dashed var(--line);border-radius:10px;margin-bottom:16px;background:var(--sunk)}
+.bank b{width:100%;font-size:.8rem;color:var(--muted);font-weight:700;letter-spacing:.06em}
+.bank button{font-family:var(--latin);font-size:1.1rem;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px}
+.bank button.used{opacity:.4;text-decoration:line-through}
+.qc{display:grid;gap:8px;padding:14px 0;border-bottom:1px dashed var(--line)}
+.qc .q{font-family:var(--latin);font-size:1.3rem;font-weight:700;margin:0}
+.qc .q span{color:var(--muted);font-weight:400;margin-right:6px;font-variant-numeric:tabular-nums}
+.qc input{font-family:var(--latin);font-size:1.15rem;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--sunk);color:var(--ink);width:100%}
+.model{background:var(--good-soft);border-radius:10px;padding:10px 14px;display:grid;gap:8px}
+.model .m{font-family:var(--latin);font-size:1.2rem;font-weight:700;color:var(--good)}
+.model .row{margin:0}
+.pzscore{font-weight:700}
+
+.wl h3{font-family:var(--display);letter-spacing:.08em;font-size:.95rem;margin:18px 0 6px;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:6px}
+.wl h3:first-child{margin-top:0}
+.wl h3 em{font-family:var(--latin);letter-spacing:0;color:var(--muted);font-weight:400}
+.wrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.wrow .lw{font-family:var(--latin);font-size:1.15rem;font-weight:700;min-width:0;overflow-wrap:anywhere}
+.wrow .lw small{display:block;font-weight:400;font-size:.85rem;color:var(--muted)}
+.wrow .ew{min-width:0;overflow-wrap:anywhere}
+.ic{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center}
+.ic svg{width:18px;height:18px}
+
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.foot .grp{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="runhead">
+    <h1 class="brand">LŪDUS LATĪNUS<small>Familia Rōmāna · vocabulary practice · Capitula I–IV</small></h1>
+    <span class="coins" id="coins" title="Earn a coin for every right answer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".25"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg><b id="coinN">0</b><span id="coinW">nummī</span></span>
+  </header>
+
+  <div class="chips" id="chips"></div>
+  <p class="hintline">Tap chapters to choose which ones to practice. Pick one or mix them all.</p>
+
+  <nav class="tabs" id="tabs" aria-label="Practice modes"></nav>
+
+  <section class="slate" id="stage" aria-live="polite"></section>
+
+  <footer class="foot">
+    <div class="grp"><span>Pronunciation tips:</span>
+      <div class="seg" id="pron"><button data-p="classical">Classical</button><button data-p="church">Church</button></div>
+    </div>
+    <div class="grp" id="resetBox"><button class="link" id="reset">Reset progress</button></div>
+  </footer>
+</div>
+
+<script>
+/* ---------- storage ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('ludus_'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem('ludus_'+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- vocabulary ---------- */
+const CH={1:'Imperium Rōmānum',2:'Familia Rōmāna',3:'Puer Improbus',4:'Dominus et Servī'};
+const RN=['','I','II','III','IV'];
+const W=[];
+const N=(ch,la,gen,g,en,o={})=>W.push(Object.assign({ch,t:'n',la,gen,g,en},o));
+const A=(ch,la,form,en)=>W.push({ch,t:'a',la,form,en});
+const V=(ch,la,imp,c,en,ien)=>W.push({ch,t:'v',la,imp,c,en,ien});
+const X=(ch,la,en,t='x')=>W.push({ch,t,la,en});
+
+// Capitulum I — Imperium Rōmānum
+N(1,'Rōma','Rōmae','f','Rome',{proper:1,loc:1});
+N(1,'Italia','Italiae','f','Italy',{proper:1,loc:1});
+N(1,'Graecia','Graeciae','f','Greece',{proper:1,loc:1});
+N(1,'Gallia','Galliae','f','Gaul (France)',{proper:1,loc:1});
+N(1,'Hispānia','Hispāniae','f','Spain',{proper:1,loc:1});
+N(1,'Germānia','Germāniae','f','Germany',{proper:1,loc:1});
+N(1,'Eurōpa','Eurōpae','f','Europe',{proper:1,loc:1});
+N(1,'Āfrica','Āfricae','f','Africa',{proper:1,loc:1});
+N(1,'Asia','Asiae','f','Asia',{proper:1,loc:1});
+N(1,'Aegyptus','Aegyptī','f','Egypt',{proper:1,loc:1});
+N(1,'Syria','Syriae','f','Syria',{proper:1,loc:1});
+N(1,'fluvius','fluviī','m','river',{loc:1});
+N(1,'īnsula','īnsulae','f','island',{loc:1});
+N(1,'oppidum','oppidī','n','town',{loc:1});
+N(1,'imperium','imperiī','n','empire',{loc:1});
+N(1,'littera','litterae','f','letter (of the alphabet)');
+N(1,'vocābulum','vocābulī','n','word');
+N(1,'numerus','numerī','m','number');
+N(1,'capitulum','capitulī','n','chapter',{loc:1});
+N(1,'exemplum','exemplī','n','example');
+N(1,'ōceanus','ōceanī','m','ocean',{loc:1});
+N(1,'prōvincia','prōvinciae','f','province',{loc:1});
+N(1,'syllaba','syllabae','f','syllable');
+N(1,'pēnsum','pēnsī','n','exercise, task');
+N(1,'grammatica','grammaticae','f','grammar');
+A(1,'magnus','magnus -a -um','big, large, great');
+A(1,'parvus','parvus -a -um','small, little');
+A(1,'Rōmānus','Rōmānus -a -um','Roman');
+A(1,'Graecus','Graecus -a -um','Greek');
+A(1,'Latīnus','Latīnus -a -um','Latin');
+A(1,'prīmus','prīmus -a -um','first');
+A(1,'secundus','secundus -a -um','second');
+A(1,'tertius','tertius -a -um','third');
+A(1,'multī','multī -ae -a','many');
+A(1,'paucī','paucī -ae -a','few');
+A(1,'ūnus','ūnus -a -um','one');
+X(1,'duo','two','num'); X(1,'trēs','three','num'); X(1,'sex','six','num'); X(1,'mīlle','a thousand','num');
+X(1,'est','is','vx'); X(1,'sunt','are','vx');
+X(1,'in','in, on','c'); X(1,'et','and','c'); X(1,'sed','but','c');
+X(1,'quoque','also, too','c'); X(1,'nōn','not','c');
+X(1,'ubi','where?','q'); X(1,'quid','what?','q');
+X(1,'-ne','(added to a word to ask a yes/no question)','q');
+X(1,'num','(asks a question expecting “no”)','q');
+X(1,'singulāris','singular (one)','g'); X(1,'plūrālis','plural (more than one)','g');
+
+// Capitulum II — Familia Rōmāna
+N(2,'familia','familiae','f','family',{loc:1});
+N(2,'fīlius','fīliī','m','son',{person:1});
+N(2,'fīlia','fīliae','f','daughter',{person:1});
+N(2,'puer','puerī','m','boy',{person:1,stem:'puer'});
+N(2,'puella','puellae','f','girl',{person:1});
+N(2,'līberī','līberōrum','m','children',{plOnly:1});
+N(2,'vir','virī','m','man, husband',{person:1,stem:'vir'});
+N(2,'fēmina','fēminae','f','woman',{person:1});
+N(2,'pater','patris','m','father',{irr:1});
+N(2,'māter','mātris','f','mother',{irr:1});
+N(2,'servus','servī','m','slave, servant',{person:1});
+N(2,'ancilla','ancillae','f','female servant, maid',{person:1});
+N(2,'dominus','dominī','m','master',{person:1});
+N(2,'domina','dominae','f','mistress, lady of the house',{person:1});
+N(2,'liber','librī','m','book',{stem:'libr',loc:1});
+N(2,'titulus','titulī','m','title');
+N(2,'pāgina','pāginae','f','page',{loc:1});
+A(2,'antīquus','antīquus -a -um','old, ancient');
+A(2,'novus','novus -a -um','new');
+A(2,'cēterī','cēterī -ae -a','the other, the rest');
+A(2,'meus','meus -a -um','my');
+A(2,'tuus','tuus -a -um','your');
+X(2,'quis','who?','q'); X(2,'quae','who? (asking about a woman)','q');
+X(2,'quī','who? (more than one)','q'); X(2,'cuius','whose?','q'); X(2,'quot','how many?','q');
+X(2,'-que','and (stuck on the end of a word)','c');
+X(2,'centum','a hundred','num'); X(2,'duae','two (for feminine words)','num'); X(2,'tria','three (for neuter words)','num');
+X(2,'masculīnum','masculine','g'); X(2,'fēminīnum','feminine','g'); X(2,'neutrum','neuter (neither)','g');
+X(2,'genetīvus','genitive (“of” form)','g');
+// names (used in drills, not the word list)
+[['Iūlius','m'],['Aemilia','f'],['Mārcus','m'],['Quīntus','m'],['Iūlia','f']].forEach(([n,g])=>N(2,n,'',g,n,{name:1,hidden:1,person:1}));
+[['Mēdus','m'],['Dāvus','m']].forEach(([n,g])=>N(4,n,'',g,n,{name:1,hidden:1,person:1}));
+
+// Capitulum III — Puer Improbus
+N(3,'scaena','scaenae','f','scene',{loc:1});
+N(3,'persōna','persōnae','f','character (in a play)');
+N(3,'mamma','mammae','f','mom',{person:1});
+V(3,'cantat','cantā',1,'sings','Sing!');
+V(3,'plōrat','plōrā',1,'cries','Cry!');
+V(3,'rīdet','rīdē',2,'laughs','Laugh!');
+V(3,'pulsat','pulsā',1,'hits','Hit!');
+V(3,'verberat','verberā',1,'beats','Beat!');
+V(3,'videt','vidē',2,'sees','See! / Look!');
+V(3,'vocat','vocā',1,'calls','Call!');
+V(3,'venit','venī',4,'comes','Come!');
+V(3,'audit','audī',4,'hears, listens','Listen!');
+V(3,'dormit','dormī',4,'sleeps','Sleep!');
+V(3,'interrogat','interrogā',1,'asks','Ask!');
+V(3,'respondet','respondē',2,'answers','Answer!');
+A(3,'laetus','laetus -a -um','happy, glad');
+A(3,'īrātus','īrātus -a -um','angry');
+A(3,'probus','probus -a -um','good, well-behaved');
+A(3,'improbus','improbus -a -um','bad, naughty');
+X(3,'eum','him','p'); X(3,'eam','her','p');
+X(3,'mē','me','p'); X(3,'tē','you (object)','p');
+X(3,'quem','whom? (a man)','q'); X(3,'quam','whom? (a woman)','q');
+X(3,'cūr','why?','q'); X(3,'quia','because','c');
+X(3,'neque','and not, nor','c'); X(3,'iam','now, already','c');
+X(3,'hīc','here','c'); X(3,'ō','oh!','i');
+X(3,'quī','who (the boy who…)','p'); X(3,'quae','who (the girl who…)','p');
+X(3,'verbum','verb','g');
+X(3,'nōminātīvus','nominative (subject form)','g');
+X(3,'accūsātīvus','accusative (object form)','g');
+
+// Capitulum IV — Dominus et Servī
+N(4,'sacculus','sacculī','m','purse, small bag',{loc:1});
+N(4,'pecūnia','pecūniae','f','money');
+N(4,'nummus','nummī','m','coin');
+N(4,'mēnsa','mēnsae','f','table',{loc:1,on:1});
+N(4,'baculum','baculī','n','stick');
+A(4,'vacuus','vacuus -a -um','empty');
+A(4,'bonus','bonus -a -um','good');
+A(4,'nūllus','nūllus -a -um','no, not any');
+A(4,'suus','suus -a -um','his own, her own');
+X(4,'quattuor','four','num'); X(4,'quīnque','five','num');
+X(4,'septem','seven','num'); X(4,'octō','eight','num'); X(4,'novem','nine','num'); X(4,'decem','ten','num');
+V(4,'habet','habē',2,'has','Have!');
+V(4,'numerat','numerā',1,'counts','Count!');
+V(4,'adest','ades','irr','is here, is present','Be here!');
+V(4,'abest','abes','irr','is away, is absent','Be away!');
+V(4,'salūtat','salūtā',1,'greets','Greet!');
+V(4,'tacet','tacē',2,'is quiet','Be quiet!');
+V(4,'accūsat','accūsā',1,'accuses, blames','Accuse!');
+V(4,'pōnit','pōne',3,'puts, places','Put!');
+V(4,'sūmit','sūme',3,'takes, picks up','Take!');
+V(4,'discēdit','discēde',3,'goes away, leaves','Go away!');
+V(4,'imperat','imperā',1,'gives orders','Command!');
+V(4,'pāret','pārē',2,'obeys','Obey!');
+X(4,'eius','his, her (of him / of her)','p');
+X(4,'is','he, that one','p');
+X(4,'quod','which (for a neuter word)','p');
+X(4,'rūrsus','again','c'); X(4,'tantum','only','c');
+X(4,'salvē','hello!','i');
+X(4,'vocātīvus','vocative (calling form)','g');
+X(4,'imperātīvus','imperative (command form)','g');
+X(4,'indicātīvus','indicative (statement form)','g');
+
+/* ---------- Pensum sentences (fill the blank) ---------- */
+const P=[
+ [1,'Rōma in Itali__ est.','ā',['a','ā','ae'],'Rome is in Italy.'],
+ [1,'Nīlus fluvi__ est.','us',['us','a','um'],'The Nile is a river.'],
+ [1,'Sicilia īnsul__ est.','a',['us','a','um'],'Sicily is an island.'],
+ [1,'Brundisium oppid__ est.','um',['us','a','um'],'Brundisium is a town.'],
+ [1,'Rhēnus et Dānuvius fluvi__ sunt.','ī',['us','ī','ae'],'The Rhine and the Danube are rivers.'],
+ [1,'Corsica et Sardinia īnsul__ sunt.','ae',['a','ae','ī'],'Corsica and Sardinia are islands.'],
+ [1,'In Italiā sunt multa oppid__.','a',['um','a','ī'],'In Italy there are many towns.'],
+ [1,'Aegyptus in Āfric__ est.','ā',['a','ā','ae'],'Egypt is in Africa.'],
+ [1,'Nīlus in Aegypt__ est.','ō',['us','ō','ī'],'The Nile is in Egypt.'],
+ [1,'Nīlus fluvius magn__ est.','us',['us','a','um'],'The Nile is a big river.'],
+ [1,'Tūsculum oppidum parv__ est.','um',['us','a','um'],'Tusculum is a small town.'],
+ [1,'Rhēnus et Dānuvius fluviī __.','sunt',['est','sunt'],'The Rhine and the Danube are rivers.'],
+ [1,'__ est Brundisium? In Italiā.','Ubi',['Ubi','Quid','Quot'],'Where is Brundisium? In Italy.'],
+ [2,'Mārcus fīli__ Iūliī est.','us',['us','a','ī'],'Marcus is the son of Julius.'],
+ [2,'Iūlia fīlia Iūli__ est.','ī',['us','ī','a'],'Julia is the daughter of Julius.'],
+ [2,'Aemilia māter Mārc__ est.','ī',['us','ī','um'],'Aemilia is the mother of Marcus.'],
+ [2,'Iūlius dominus serv__ est.','ōrum',['ī','ōrum','ārum'],'Julius is the master of the slaves.'],
+ [2,'Aemilia domina ancill__ est.','ārum',['ae','ōrum','ārum'],'Aemilia is the mistress of the maids.'],
+ [2,'In familiā Iūliī sunt centum serv__.','ī',['us','ī','ae'],'In Julius’s family there are a hundred slaves.'],
+ [2,'__ est pater Iūliae? Iūlius.','Quis',['Quis','Ubi','Cūr'],'Who is Julia’s father? Julius.'],
+ [2,'Mārcus et Quīntus fīli__ sunt.','ī',['us','ī','ae'],'Marcus and Quintus are sons.'],
+ [2,'Aemilia fēmin__ Rōmāna est.','a',['a','ae','us'],'Aemilia is a Roman woman.'],
+ [2,'Iūlius vir Rōmān__ est.','us',['us','a','um'],'Julius is a Roman man.'],
+ [3,'Mārcus Iūli__ pulsat.','am',['a','am','um'],'Marcus hits Julia.'],
+ [3,'Quīntus Mārc__ videt.','um',['us','um','am'],'Quintus sees Marcus.'],
+ [3,'Iūlia plōr__: “Uhuhū!”','at',['at','et','it'],'Julia cries: “Boo-hoo!”'],
+ [3,'Mārcus rīd__: “Hahahae!”','et',['at','et','it'],'Marcus laughs: “Ha ha ha!”'],
+ [3,'Iūlius dorm__.','it',['at','et','it'],'Julius is sleeping.'],
+ [3,'Aemilia Quīnt__ interrogat.','um',['us','um','am'],'Aemilia asks Quintus.'],
+ [3,'Iūlia cantat. Iūlia laet__ est.','a',['us','a','um'],'Julia sings. Julia is happy.'],
+ [3,'Mārcus īrāt__ est.','us',['us','a','um'],'Marcus is angry.'],
+ [3,'__ Iūlia plōrat? Quia Mārcus eam pulsat.','Cūr',['Cūr','Quis','Ubi'],'Why is Julia crying? Because Marcus hits her.'],
+ [3,'Iūlia Aemili__ vocat: “Mamma!”','am',['a','am','ae'],'Julia calls Aemilia: “Mom!”'],
+ [3,'Aemilia Iūli__ videt.','um',['us','um','ī'],'Aemilia sees Julius.'],
+ [3,'Iūlius Quīntum nōn audit, quia dorm__.','it',['at','et','it'],'Julius does not hear Quintus, because he is sleeping.'],
+ [4,'Salvē, domin__!','e',['us','e','um'],'Hello, master!'],
+ [4,'Respond__, serve!','ē',['ē','et','it'],'Answer, slave!'],
+ [4,'Tac__, Mēde!','ē',['ē','et','ā'],'Be quiet, Medus!'],
+ [4,'Ven__, Dāve!','ī',['ī','it','e'],'Come, Davus!'],
+ [4,'Voc__ Dāvum!','ā',['ā','at','ē'],'Call Davus!'],
+ [4,'Pōn__ sacculum in mēnsā!','e',['e','it','ā'],'Put the purse on the table!'],
+ [4,'Dāvus sacculum suum sūm__.','it',['e','it','at'],'Davus picks up his purse.'],
+ [4,'Dominus imper__.','at',['at','et','ā'],'The master gives orders.'],
+ [4,'Bonus servus pār__.','et',['ē','et','it'],'A good slave obeys.'],
+ [4,'In sacculō Dāvī ūnus numm__ est.','us',['us','ī','um'],'In Davus’s purse there is one coin.'],
+ [4,'Iūlius pecūni__ numerat.','am',['a','am','ae'],'Julius counts the money.'],
+ [4,'Sacculus Dāvī vacu__ est.','us',['us','a','um'],'Davus’s purse is empty.'],
+ [4,'Mēdus ad__; Dāvus abest.','est',['est','sunt'],'Medus is here; Davus is away.'],
+ [4,'Ubi sunt nummī me__?','ī',['us','ī','a'],'Where are my coins?'],
+ [4,'Ecce baculum in mēns__.','ā',['a','ā','ae'],'Look, the stick is on the table.'],
+ [4,'Sūme sacculum tuum, bon__ serve!','e',['us','e','a'],'Pick up your purse, good slave!'],
+];
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const plain=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/^-/,'').trim();
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const key=w=>w.ch+':'+w.la;
+const first=en=>en.split(/[,(]/)[0].trim();
+const G={m:'masculine',f:'feminine',n:'neuter'};
+const POS={n:'noun',a:'adjective',v:'verb',vx:'verb',x:'word',num:'number',g:'grammar word',q:'question word',p:'pronoun',c:'little word',i:'exclamation'};
+
+function decl(w){
+  if(w.t!=='n'||w.irr||w.plOnly)return null;
+  if(w.stem)return{d:2,s:w.stem};
+  if(w.la.endsWith('us'))return{d:2,s:w.la.slice(0,-2)};
+  if(w.la.endsWith('um'))return{d:'2n',s:w.la.slice(0,-2)};
+  if(w.la.endsWith('a'))return{d:1,s:w.la.slice(0,-1)};
+  return null;
+}
+function forms(w){
+  const k=decl(w); if(!k)return null; const s=k.s;
+  if(k.d===1)return{d:1,s,gen:s+'ae',acc:s+'am',abl:s+'ā',pl:s+'ae',genpl:s+'ārum',voc:w.la};
+  if(k.d==='2n')return{d:'2n',s,gen:s+'ī',acc:w.la,abl:s+'ō',pl:s+'a',genpl:s+'ōrum',voc:w.la};
+  let voc=w.la.endsWith('ius')?s.slice(0,-1)+'ī':(w.la.endsWith('us')?s+'e':w.la);
+  return{d:2,s,gen:s+'ī',acc:s+'um',abl:s+'ō',pl:s+'ī',genpl:s+'ōrum',voc};
+}
+function detail(w){
+  if(w.t==='n'){
+    if(w.plOnly)return `<b>${w.la}, ${w.gen}</b> · ${G[w.g]} noun · used only in the plural`;
+    if(w.irr)return `<b>${w.la}, ${w.gen}</b> · ${G[w.g]} noun · a different pattern you’ll meet later`;
+    const f=forms(w);
+    const pat=f.d===1?'-a, -ae':f.d==='2n'?'-um, -ī':(w.la.endsWith('us')?'-us, -ī':'-er, -ī');
+    return `<b>${w.la}, ${w.gen}</b> · ${G[w.g]} noun<br>Ending pattern <b>${pat}</b>`+(w.proper?'':` · plural <b>${f.pl}</b>`);
+  }
+  if(w.t==='a')return `<b>${w.form}</b> · adjective<br>-us with masculine, -a with feminine, -um with neuter words`;
+  if(w.t==='v'){
+    const c=w.c==='irr'?'irregular':`type [${w.c}]`;
+    return `<b>${w.la}</b> = he/she ${first(w.en)} · ${c} verb<br>Command: <b>${w.imp}!</b> = “${w.ien}”`;
+  }
+  return POS[w.t]||'word';
+}
+const short=w=>w.t==='n'?`${w.la}, ${w.gen} (${w.g}.)`:w.t==='a'?w.form:w.t==='v'?`${w.la} · ${w.imp}!`:POS[w.t];
+
+/* ---------- state ---------- */
+const S={sel:store.get('sel',[1,2,3,4]),mode:store.get('mode','cards'),pron:store.get('pron','classical'),
+  coins:store.get('coins',0),box:store.get('box',{}),dir:'la',sayMode:'read',drills:store.get('drills',null),sess:null};
+const box=w=>S.box[key(w)]||0;
+function setBox(w,v){S.box[key(w)]=Math.max(0,Math.min(3,v));store.set('box',S.box);renderChips()}
+const pool=()=>W.filter(w=>!w.hidden&&S.sel.includes(w.ch));
+const maxCh=()=>Math.max(...S.sel);
+const mastery=c=>{const ws=W.filter(w=>!w.hidden&&w.ch===c);return Math.round(ws.reduce((a,w)=>a+box(w),0)/(ws.length*3)*100)};
+const weighted=(arr,n)=>arr.map(w=>[box(w)+Math.random()*1.6,w]).sort((a,b)=>a[0]-b[0]).slice(0,n).map(x=>x[1]);
+
+function addCoin(){S.coins++;store.set('coins',S.coins);paintCoins();const c=$('#coins');c.classList.add('bump');setTimeout(()=>c.classList.remove('bump'),220)}
+function paintCoins(){$('#coinN').textContent=S.coins;$('#coinW').textContent=S.coins===1?'nummus':'nummī'}
+
+/* ---------- speech ---------- */
+const canSpeak='speechSynthesis' in window;
+let voices=[];
+if(canSpeak){const lv=()=>{try{voices=speechSynthesis.getVoices()}catch(e){}};lv();try{speechSynthesis.onvoiceschanged=lv}catch(e){}}
+function speak(t){
+  if(!canSpeak)return;
+  try{
+    const u=new SpeechSynthesisUtterance(plain(t));
+    const v=voices.find(v=>/^la/i.test(v.lang))||voices.find(v=>/^it/i.test(v.lang));
+    if(v){u.voice=v;u.lang=v.lang}else u.lang='it-IT';
+    u.rate=.75;speechSynthesis.cancel();speechSynthesis.speak(u);
+  }catch(e){}
+}
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const hearBtn=(la,label='Hear it')=>canSpeak?`<button class="btn" data-say="${esc(la)}">${SPK}${label}</button>`:'';
+
+function tips(la){
+  const p=plain(la),t=[],ch=S.pron==='church';
+  if(/[āēīōū]/i.test(la))t.push(['ā ē ī ō','A line over a vowel means hold it a little longer.']);
+  if(ch){
+    if(p.includes('v'))t.push(['v','like English v']);
+    if(/c(e|i)/.test(p))t.push(['c','before e, i, ae, oe it sounds like “ch” in church']);
+    if(/c(?![ei])/.test(p))t.push(['c','before a, o, u it is hard, like k']);
+    if(/g[ei]/.test(p))t.push(['g','before e or i it sounds like j']);
+    if(/ae|oe/.test(p))t.push(['ae','ae and oe sound like “ay” in day']);
+    if(/ti[aeiou]/.test(p))t.push(['ti','before a vowel it sounds like “tsee”']);
+  }else{
+    if(p.includes('v'))t.push(['v','sounds like English w: vir → “weer”']);
+    if(p.includes('c'))t.push(['c','always hard, like k']);
+    if(/g/.test(p))t.push(['g','always hard, as in “go”']);
+    if(p.includes('ae'))t.push(['ae','rhymes with “eye”']);
+    if(p.includes('oe'))t.push(['oe','sounds like “oy” in boy']);
+  }
+  if(p.includes('au'))t.push(['au','sounds like “ow” in how']);
+  if(p.includes('qu'))t.push(['qu','sounds like “kw”']);
+  if(/^i[aeiou]/.test(p)||/[aeo]i[aeiou]/.test(p))t.push(['i','next to a vowel here it sounds like y: iam → “yahm”']);
+  if(p.includes('r'))t.push(['r','tap or roll it, like in Spanish']);
+  if(/e$/.test(p))t.push(['-e','the final e is said (“eh”), never silent']);
+  if(!t.length)t.push(['✓','Say every letter. Latin has no silent letters.']);
+  return t;
+}
+const tipList=la=>`<ul class="tips">${tips(la).map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul>`;
+
+/* ---------- question builders ---------- */
+function mkOpts(ans,cands){const o=shuffle([...new Set(cands)].filter(c=>c!==ans)).slice(0,3);o.push(ans);return shuffle(o)}
+
+function quizQ(w,p){
+  const src=p.length>=6?p:W.filter(x=>!x.hidden);
+  const others=shuffle(src.filter(x=>x!==w&&x.en!==w.en&&plain(x.la)!==plain(w.la))).sort((a,b)=>(a.t===w.t?0:1)-(b.t===w.t?0:1));
+  const kinds=['la2en','en2la','type'];const k=kinds[Math.floor(Math.random()*3)];
+  if(k==='la2en')return{w,kind:'mc',prompt:`What does <span class="latin">${w.la}</span> mean?`,opts:mkOpts(w.en,others.slice(0,6).map(x=>x.en)),answer:w.en,explain:detail(w)};
+  if(k==='en2la')return{w,kind:'mc',la:1,prompt:`Which Latin word means “${w.en}”?`,opts:mkOpts(w.la,others.slice(0,6).map(x=>x.la)),answer:w.la,explain:detail(w)};
+  return{w,kind:'type',prompt:`Type the Latin word for “${w.en}”<small>Macrons are optional — vocat or vocāt both count. Chapter ${RN[w.ch]}.</small>`,answer:w.la,explain:detail(w)};
+}
+
+const DR=[
+ {id:'gender',ch:1,label:'Gender m / f / n'},{id:'plural',ch:1,label:'Plural'},{id:'inabl',ch:1,label:'in + -ā / -ō'},
+ {id:'gen',ch:2,label:'“of” -ī / -ae'},{id:'genpl',ch:2,label:'“of” -ōrum / -ārum'},
+ {id:'acc',ch:3,label:'Object -um / -am'},{id:'verbend',ch:3,label:'Verb -at / -et / -it'},
+ {id:'voc',ch:4,label:'Calling -e'},{id:'imp',ch:4,label:'Command form'},{id:'ind',ch:4,label:'Command → statement'}];
+const EX={
+ gender:'-us words are usually masculine, -a feminine, -um neuter. Lands in -us like Aegyptus are feminine.',
+ plural:'Plural: -us → -ī, -a → -ae, -um → -a.',
+ inabl:'After in (“in, on”): -a → -ā, -us and -um → -ō.',
+ gen:'“Of” (genitive): -us and -um → -ī, -a → -ae.',
+ genpl:'“Of” many (genitive plural): -ōrum for -us / -um words, -ārum for -a words.',
+ acc:'Object (accusative): -us → -um, -a → -am.',
+ verbend:'He/she does it: type [1] ends -at, [2] -et, [3] and [4] -it.',
+ voc:'Calling someone (vocative): -us → -e. Words in -ius → -ī (Iūlius → Iūlī, fīlius → fīlī). Other words stay the same.',
+ imp:'Command: [1] -at → -ā, [2] -et → -ē, [3] -it → -e, [4] -it → -ī.',
+ ind:'Command → statement: -ā → -at, -ē → -et, -e and -ī → -it.'};
+
+function drillQ(id,w){
+  const f=w.t==='n'?forms(w):null, s=f&&f.s, L=`<span class="latin">${w.la}</span>`;
+  const base={kind:'mc',la:1,explain:EX[id]};
+  switch(id){
+   case 'gender': if(w.t!=='n'||w.name)return null;
+     return{...base,la:0,prompt:`Is ${L} masculine, feminine, or neuter?<small>${w.en}</small>`,opts:['masculine','feminine','neuter'],answer:G[w.g]};
+   case 'plural': if(!f||w.proper)return null;
+     return{...base,prompt:`What is the plural of ${L}?<small>more than one ${first(w.en)}</small>`,opts:mkOpts(f.pl,[s+'ī',s+'ae',s+'a',s+'um',w.la,s+'ōs']),answer:f.pl};
+   case 'inabl': if(!f||!w.loc)return null;
+     return{...base,prompt:`in ___ <small>${w.on?'on':'in'} ${w.proper?'':'the '}${first(w.en)} · from ${w.la}</small>`,opts:mkOpts(f.abl,[s+'ā',s+'ō',s+'ae',s+'ī',w.la]),answer:f.abl};
+   case 'gen': if(!f)return null;
+     return{...base,prompt:`“of ${w.proper||w.name?w.la:'the '+first(w.en)}” — which form of ${L}?`,opts:mkOpts(f.gen,[s+'ī',s+'ae',s+'um',s+'am',w.la]),answer:f.gen};
+   case 'genpl': if(!f||w.proper||w.name)return null;
+     return{...base,prompt:`“of the ${first(w.en)}s” (many) — which form of ${L}?`,opts:mkOpts(f.genpl,[s+'ōrum',s+'ārum',s+'ī',s+'ae']),answer:f.genpl};
+   case 'acc': if(!f||f.d==='2n'||w.proper)return null;{
+     const subj=w.la==='Quīntus'?'Iūlia':'Quīntus';
+     return{...base,prompt:`<span class="latin">${subj} ___ videt.</span><small>${subj} sees ${w.name?w.la:'the '+first(w.en)} → object form of ${w.la}</small>`,opts:mkOpts(f.acc,[s+'um',s+'am',s+'ī',s+'ae',w.la]),answer:f.acc};}
+   case 'voc': if(!f||!w.person)return null;
+     return{...base,prompt:`Call out to ${L}: “Salvē, ___!”`,opts:mkOpts(f.voc,[w.la,s+'e',s+'ī',s+'um',s+'ae']),answer:f.voc};
+   case 'verbend': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
+     return{...base,prompt:`“he/she ${first(w.en)}” — pick the right Latin`,opts:mkOpts(w.la,[st+'at',st+'et',st+'it']),answer:w.la};}
+   case 'imp': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
+     return{...base,prompt:`${L} means “he/she ${first(w.en)}.” How do you order someone: “${w.ien}”`,opts:mkOpts(w.imp,[st+'ā',st+'ē',st+'e',st+'ī']),answer:w.imp+''};}
+   case 'ind': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
+     return{...base,prompt:`“<span class="latin">${w.imp}!</span>” is a command. Which one means “he/she ${first(w.en)}”?`,opts:mkOpts(w.la,[st+'at',st+'et',st+'it']),answer:w.la};}
+  }
+  return null;
+}
+function availDrills(){return DR.filter(d=>d.ch<=maxCh())}
+function activeDrills(){const av=availDrills().map(d=>d.id);const a=(S.drills||av).filter(id=>av.includes(id));return a.length?a:av}
+
+/* ---------- session builders ---------- */
+function newSess(){
+  const p=pool();
+  if(S.mode==='cards')return{deck:weighted(p,p.length),i:0,flip:false,known:0};
+  if(S.mode==='quiz'){const ws=weighted(p,10);return{title:'Quiz',qs:ws.map(w=>quizQ(w,p)),i:0,score:0,missed:[],done:false}}
+  if(S.mode==='endings'){
+    const words=W.filter(w=>S.sel.includes(w.ch)||(w.name&&w.ch<=maxCh()));
+    const lists=activeDrills().map(id=>shuffle(words).map(w=>drillQ(id,w)).filter(Boolean)).filter(l=>l.length);
+    const qs=[];let k=0;while(qs.length<10&&lists.some(l=>l.length)){const l=lists[k%lists.length];if(l.length)qs.push(l.pop());k++}
+    return{title:'Endings',qs:shuffle(qs),i:0,score:0,missed:[]};
+  }
+  if(S.mode==='pensum'){
+    const qs=shuffle(P.filter(r=>S.sel.includes(r[0]))).slice(0,10).map(([ch,s,a,o,en])=>{
+      const i=s.indexOf('__'),end=i>0&&/\p{L}/u.test(s[i-1]);
+      return{kind:'mc',la:1,sent:s,end,prompt:'',opts:shuffle(o),answer:a,en,explain:`<span class="full">${s.replace('__',a)}</span><br>${en}`};});
+    return{title:'Pensum',qs,i:0,score:0,missed:[]};
+  }
+  if(S.mode==='say')return{deck:weighted(p,p.length),i:0,shown:false};
+  if(S.mode==='pensa')return{ch:maxCh(),part:'A',paid:{}};
+  return{};
+}
+
+
+/* ---------- Pensum A · B · C (original paragraphs in the book's style) ---------- */
+const PZ={
+1:{A:`Tiberis fluvi{us} est. Tiberis et Padus fluvi{ī} sunt. Corsica īnsul{a} est. Corsica et Sicilia īnsul{ae} sunt. Tūsculum oppid{um} est. Tūsculum et Brundisium oppid{a} sunt.|Nīlus fluvius magn{us} est, sed Tiberis fluvius parv{us} est. Sicilia īnsula magn{a} est; Melita īnsula parv{a} est. Brundisium oppidum magn{um} est.|Rōma in Itali{ā} est. Aegyptus in Āfric{ā} est. In Graeci{ā} sunt mult{ae} īnsulae et mult{a} oppida. In Arabiā sunt pauc{ī} fluviī.`,
+ B:`Nīlus {fluvius} est. Sardinia {īnsula} est. Sparta {oppidum} Graecum est. Rōma et Brundisium oppida Rōmāna {sunt}. Melita īnsula {parva} est.|Germānia {nōn} in Āfricā est, {sed} in Eurōpā. Gallia {quoque} in Eurōpā est. {Ubi} est Aegyptus? Aegyptus {in} Āfricā est.|A {littera} Latīna est. III {numerus} Rōmānus est.`,
+ C:[['Ubi est Rōma?','Rōma in Italiā est.'],['Estne Aegyptus in Eurōpā?','Aegyptus nōn in Eurōpā, sed in Āfricā est.'],['Quid est Nīlus?','Nīlus fluvius est.'],['Num Sicilia oppidum est?','Sicilia nōn oppidum, sed īnsula est.'],['Ubi sunt Syria et Arabia?','Syria et Arabia in Asiā sunt.'],['Estne Sardinia īnsula magna?','Sardinia īnsula magna est.'],['Quid est B?','B littera Latīna est.'],['Estne III magnus numerus?','III nōn magnus, sed parvus numerus est.']]},
+2:{A:`Quīntus fīli{us} Aemiliae est. Iūlia fīli{a} Aemiliae est. Mārcus et Quīntus fīli{ī} Iūli{ī} sunt.|Dāvus serv{us} Iūliī est. Iūlius domin{us} Dāv{ī} est. Iūlius dominus serv{ōrum} est. Syra ancill{a} Aemiliae est. Aemilia domin{a} Syr{ae} est. Aemilia domina ancill{ārum} est.|In familiā Iūli{ī} sunt multī serv{ī} et paucī līber{ī}. Numerus serv{ōrum} magnus est. Mēdus servus Graec{us} est; Dēlia ancilla Graec{a} est.`,
+ B:`Iūlius {pater} Mārcī est. Aemilia {māter} Iūliae est. Mārcus {fīlius} Iūliī est. Iūlia {fīlia} Aemiliae est. Mārcus, Quīntus, Iūlia sunt trēs {līberī}.|Mēdus {servus} Iūliī est; Iūlius {dominus} Mēdī est. Dēlia {ancilla} Aemiliae est.|{Quis} est Quīntus? Quīntus puer Rōmānus est. {Cuius} servus est Dāvus? Dāvus servus Iūliī est. {Quot} servī sunt in {familiā}? In familiā sunt {centum} servī.|LINGVA LATINA est {liber} Latīnus. Iūlius: “Dāvus servus {meus} est.”`,
+ C:[['Quis est Mārcus?','Mārcus puer Rōmānus est; Mārcus fīlius Iūliī est.'],['Quae est Aemilia?','Aemilia fēmina Rōmāna est; Aemilia māter līberōrum est.'],['Cuius fīlius est Quīntus?','Quīntus fīlius Iūliī et Aemiliae est.'],['Quot līberī sunt in familiā Iūliī?','In familiā Iūliī sunt trēs līberī.'],['Estne Mēdus fīlius Iūliī?','Mēdus nōn fīlius, sed servus Iūliī est.'],['Quae est domina ancillārum?','Aemilia domina ancillārum est.'],['Num “ancilla” vocābulum masculīnum est?','“Ancilla” nōn masculīnum, sed fēminīnum est.'],['Estne Iūlius vir Graecus?','Iūlius nōn vir Graecus, sed Rōmānus est.']]},
+3:{A:`Iūlia cant{at}. Iūlia laet{a} est. Mārcus Iūli{am} puls{at}. Iūlia plōr{at}, et Mārcus rīd{et}. Quīntus Mārc{um} videt. Quīntus īrāt{us} est.|Iūlia Aemili{am} voc{at}: “Mamma!” Aemilia ven{it} et Quīnt{um} interrog{at}: “Cūr Iūlia plōrat?” Quīntus respond{et}: “Iūlia plōrat, quia Mārcus e{am} pulsat.”|Iūlius dorm{it} neque Quīntum aud{it}. Aemilia Mārcum verber{at}. Puer qu{ī} puellam pulsat improb{us} est. Puella qu{ae} cantat laet{a} est.`,
+ B:`Puella {cantat}: “Lalla.” Puer improbus puellam {pulsat}. Iūlia {plōrat}: “Uhuhū!” Mārcus {rīdet}: “Hahahae!”|Iūlia Aemiliam {vocat}: “Mamma!” Aemilia {venit} et Quīntum {interrogat}: “Cūr Iūlia plōrat?” Quīntus {respondet}: “Iūlia plōrat, {quia} Mārcus eam pulsat.”|Iūlius {dormit} neque Quīntum {audit}. {Cūr} Aemilia Mārcum verberat? Quia Mārcus puer {improbus} est. Aemilia {eum} verberat. Iūlia {laeta} nōn est.`,
+ C:[['Quis Iūliam pulsat?','Mārcus Iūliam pulsat.'],['Cūr Iūlia plōrat?','Iūlia plōrat, quia Mārcus eam pulsat.'],['Quem Quīntus videt?','Quīntus Mārcum videt.'],['Quis Aemiliam vocat?','Iūlia Aemiliam vocat.'],['Cūr Iūlius Quīntum nōn audit?','Iūlius Quīntum nōn audit, quia dormit.'],['Quem Aemilia verberat?','Aemilia Mārcum verberat.'],['Rīdetne Iūlia?','Iūlia nōn rīdet, sed plōrat.'],['Num “Iūliam” nōminātīvus est?','“Iūliam” nōn nōminātīvus, sed accūsātīvus est.']]},
+4:{A:`Iūlius pecūni{am} numer{at}. In sacculō Iūli{ī} sunt decem nummī. Iūlius Mēd{um} voc{at}: “Mēd{e}! Ven{ī}!” Mēdus ven{it} et dominum salūt{at}: “Salvē, domin{e}!”|Iūlius: “Respond{ē}, serv{e}! Ubi est pecūnia me{a}?” Mēdus Dāv{um} accūs{at}. Iūlius: “Pōn{e} sacculum tuum in mēns{ā}, Dāve!” Dāvus pār{et}: sacculum su{um} in mēnsā pōn{it}. Sacculus Dāvī vacu{us} est.|Iūlius: “Sūm{e} sacculum tuum et discēd{e}, bon{e} serve!” Dāvus discēd{it}. Mēdus quoque abest, quia pecūniam dominī habet!`,
+ B:`In sacculō Iūliī est {pecūnia}. In sacculō sunt decem {nummī}. Mēdus {adest}; Dāvus {abest}. Dāvus dominum {salūtat}: “Salvē, domine!”|Iūlius: “Ubi sunt nummī meī?” Dāvus {tacet}. Mēdus Dāvum {accūsat}. Dāvus sacculum in {mēnsā} {pōnit}. {Sacculus} Dāvī {vacuus} est. Iūlius {baculum} suum in mēnsā pōnit.|Dominus {imperat}, bonus servus {pāret}. Dāvus sacculum suum {sūmit} et discēdit.`,
+ C:[['Quot nummī sunt in sacculō Iūliī?','In sacculō Iūliī decem nummī sunt.'],['Adestne Dāvus in scaenā prīmā?','Dāvus nōn adest, sed abest.'],['Quis Dāvum vocat?','Mēdus Dāvum vocat.'],['Quem Mēdus accūsat?','Mēdus Dāvum accūsat.'],['Estne sacculus Dāvī vacuus?','Sacculus Dāvī vacuus est.'],['Quid Iūlius pōnit in sacculō Dāvī?','Iūlius ūnum nummum in sacculō Dāvī pōnit.'],['Cūr Mēdus discēdit?','Mēdus discēdit, quia pecūniam dominī habet.'],['Cūr Mēdus Iūlium nōn audit?','Mēdus Iūlium nōn audit, quia abest.']]}
+};
+const PZINFO={A:'Write the missing endings. Press Enter to jump to the next blank.',B:'Write the missing words. Tap a word in the box to fill the blank you are on.',C:'Answer each question in Latin with a full sentence. Then check the model answer.'};
+function paraHTML(txt,part){
+  return txt.split('|').map(par=>'<p>'+par.split(/\{([^}]+)\}/).map((x,i)=>{
+    if(i%2===0)return esc(x);
+    const w=part==='A'?Math.max(2,x.length+1):Math.max(5,x.length+2);
+    return `<input class="gap" data-a="${esc(x)}" style="width:${w}ch" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="blank">`;
+  }).join('')+'</p>').join('');
+}
+function pensaHTML(){
+  const z=S.sess,chs=S.sel.slice().sort();if(!chs.includes(z.ch))z.ch=chs[chs.length-1];
+  const d=PZ[z.ch],part=z.part;
+  const chSeg=chs.length>1?`<div class="seg">${chs.map(c=>`<button class="${c===z.ch?'on':''}" data-pzch="${c}">Cap. ${RN[c]}</button>`).join('')}</div>`:`<span class="meta">Cap. ${RN[z.ch]} · ${CH[z.ch]}</span>`;
+  const pSeg=`<div class="seg">${['A','B','C'].map(p=>`<button class="${p===part?'on':''}" data-pzpart="${p}">Pēnsum ${p}</button>`).join('')}</div>`;
+  let body;
+  if(part==='C'){
+    body=d.C.map(([q,a],i)=>`<div class="qc"><p class="q"><span>${i+1}.</span>${q}</p><input id="pzc${z.ch}_${i}" placeholder="Answer in Latin…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Your answer">
+      <div class="row" style="margin:0"><button class="btn" data-act="pzshow" data-i="${i}">Check answer</button></div>
+      <div class="model" id="pzm${i}" hidden><div class="tap">A good answer:</div><div class="m">${a}</div><div class="row">${hearBtn(a)}<button class="btn good" data-act="pzok" data-i="${i}">Mine matches</button><button class="btn" data-act="pzno" data-i="${i}">Not quite</button></div></div></div>`).join('');
+  }else{
+    const txt=d[part];
+    const bank=part==='B'?`<div class="bank"><b>WORD BOX</b>${shuffle([...txt.matchAll(/\{([^}]+)\}/g)].map(m=>m[1])).map(w=>`<button data-bank="${esc(w)}">${w}</button>`).join('')}</div>`:'';
+    body=`${bank}<div class="para" id="para">${paraHTML(txt,part)}</div>
+    <div id="pzres" class="pzscore"></div>
+    <div class="row"><button class="btn primary grow" data-act="pzcheck">Check my work</button><button class="btn" data-act="pzretry">Clear mistakes</button><button class="btn ghost" data-act="pzshowall">Show answers</button></div>`;
+  }
+  return `<div class="pzbar">${chSeg}${pSeg}</div><h2 class="pzttl">PĒNSUM ${part}</h2><p class="pzint">${PZINFO[part]}</p>${body}`;
+}
+function pzCheck(){
+  const z=S.sess,gaps=[...document.querySelectorAll('#para .gap')];let ok=0;
+  gaps.forEach(g=>{
+    const a=g.dataset.a,v=g.value.trim(),nx=g.nextElementSibling;
+    if(nx&&nx.classList.contains('fix'))nx.remove();
+    g.classList.remove('ok','no');
+    if(plain(v)===plain(a)&&v){g.value=a;g.classList.add('ok');g.readOnly=true;ok++;
+      const k=z.ch+z.part+gaps.indexOf(g);if(!z.paid[k]){z.paid[k]=1;addCoin()}}
+    else{g.classList.add('no');if(v){const f=document.createElement('span');f.className='fix';f.textContent=a;g.after(f)}}
+  });
+  const n=gaps.length;
+  $('#pzres').innerHTML=ok===n?`<span style="color:var(--good)">Optimē! All ${n} right.</span>`:`${ok} of ${n} right. Fix the red ones and check again.`;
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('gap')){
+    e.preventDefault();const gs=[...document.querySelectorAll('#para .gap')];const nx=gs.slice(gs.indexOf(e.target)+1).find(g=>!g.readOnly);if(nx)nx.focus();else pzCheck();}
+});
+let lastGap=null;
+document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('gap'))lastGap=e.target});
+
+/* ---------- rendering ---------- */
+const MODES=[['cards','Flashcards','Chartae'],['quiz','Quiz','Probātiō'],['endings','Endings','Terminātiōnēs'],['pensum','Quick fill','Supplē'],['pensa','Pensum','A · B · C'],['say','Say it','Dīc!'],['list','Word list','Index']];
+function renderTabs(){$('#tabs').innerHTML=MODES.map(([id,en,la])=>`<button class="tab${S.mode===id?' on':''}" data-mode="${id}">${en}<span>${la}</span></button>`).join('')}
+function renderChips(){
+  $('#chips').innerHTML=[1,2,3,4].map(c=>{const on=S.sel.includes(c),p=mastery(c);
+    return `<button class="chip${on?' on':''}" data-ch="${c}" aria-pressed="${on}"><span class="cap">CAP. ${RN[c]}</span><span class="ct">${CH[c]}</span><span class="bar"><i style="width:${p}%"></i></span><span class="pc">${p}% learned</span></button>`}).join('');
+}
+const dots=w=>`<span class="dots" title="How well you know it">${[0,1,2].map(i=>`<i class="${box(w)>i?'f':''}"></i>`).join('')}</span>`;
+const selLabel=()=>S.sel.length===4?'all chapters':'Cap. '+S.sel.slice().sort().map(c=>RN[c]).join(', ');
+
+function render(){
+  renderTabs();
+  if(!S.sess&&S.mode!=='list')S.sess=newSess();
+  const st=$('#stage'),m=S.mode;
+  if(m==='cards')st.innerHTML=cardsHTML();
+  else if(m==='say')st.innerHTML=sayHTML();
+  else if(m==='list')st.innerHTML=listHTML();
+  else if(m==='pensa')st.innerHTML=pensaHTML();
+  else st.innerHTML=(m==='endings'?drillBar():'')+roundHTML();
+  const inp=$('#typed');if(inp)inp.focus();
+  lastGap=null;
+}
+
+function cardsHTML(){
+  const s=S.sess,d=s.deck;
+  if(s.i>=d.length)return `<div class="result"><div class="verdict">Fīnis!</div><p>You went through all ${d.length} cards (${selLabel()}). You knew <b>${s.known}</b>.</p><div class="row" style="justify-content:center"><button class="btn primary" data-act="restart">Go again</button></div></div>`;
+  const w=d[s.i];
+  const front=S.dir==='la'?`<span class="big">${w.la}</span>`:`<span class="big en">${w.en}</span>`;
+  const back=`<span class="big">${w.la}</span><span class="en">${w.en}</span><div class="det">${detail(w)}</div>`;
+  return `<div class="meta"><span>Card ${s.i+1} of ${d.length} · Cap. ${RN[w.ch]} · ${POS[w.t]}</span>${dots(w)}</div>
+  <div class="progress"><i style="width:${s.i/d.length*100}%"></i></div>
+  <button class="flash" data-act="flip" aria-label="Flip card">${s.flip?back:front}${s.flip?'':'<span class="tap">Tap to flip</span>'}</button>
+  <div class="row spread"><div class="row" style="margin:0">${hearBtn(w.la)}</div>
+    <div class="seg" role="group" aria-label="Card front"><button class="${S.dir==='la'?'on':''}" data-dir="la">Latin first</button><button class="${S.dir==='en'?'on':''}" data-dir="en">English first</button></div></div>
+  ${s.flip?`<div class="row"><button class="btn grow" data-act="nope">Still learning</button><button class="btn good grow" data-act="knew">I knew it</button></div>`:''}`;
+}
+
+function sayHTML(){
+  const s=S.sess,d=s.deck;
+  if(s.i>=d.length)return `<div class="result"><div class="verdict">Optimē dīxistī!</div><p>You said every word. Well spoken!</p><div class="row" style="justify-content:center"><button class="btn primary" data-act="restart">Go again</button></div></div>`;
+  const w=d[s.i],read=S.sayMode==='read';
+  const seg=`<div class="seg"><button class="${read?'on':''}" data-say-mode="read">Read it aloud</button><button class="${read?'':'on'}" data-say-mode="recall">Say it from memory</button></div>`;
+  let body;
+  if(read||s.shown){
+    body=`<div class="flash" style="cursor:default"><span class="big">${w.la}</span><span class="en">${w.en}</span>${tipList(w.la)}</div>
+    <div class="row">${hearBtn(w.la,'Hear it')}<span class="tap" style="flex:1">Say it out loud 3 times. ${canSpeak?'The computer voice is close, not perfect — trust the tips.':''}</span></div>
+    <div class="row">${read?`<button class="btn primary grow" data-act="saynext">Next word</button>`:`<button class="btn grow" data-act="saynope">Not yet</button><button class="btn good grow" data-act="sayok">I said it right</button>`}</div>`;
+  }else{
+    body=`<div class="flash" style="cursor:default"><span class="tap">Say the Latin word for</span><span class="big en">${w.en}</span><span class="tap">Cap. ${RN[w.ch]} · ${POS[w.t]}</span></div>
+    <div class="row"><button class="btn primary grow" data-act="reveal">Show me &amp; read it to me</button></div>`;
+  }
+  return `<div class="row spread" style="margin:0 0 6px">${seg}<span class="meta">${s.i+1} of ${d.length}</span></div><div class="progress"><i style="width:${s.i/d.length*100}%"></i></div>${body}`;
+}
+
+function listHTML(){
+  return `<div class="wl">${S.sel.slice().sort().map(c=>`<h3>CAP. ${RN[c]} <em>${CH[c]}</em></h3>`+W.filter(w=>!w.hidden&&w.ch===c).map(w=>
+   `<div class="wrow"><div class="lw">${w.la}<small>${short(w)}</small></div><div class="ew">${w.en} ${dots(w)}</div>${canSpeak?`<button class="ic" data-say="${esc(w.la)}" aria-label="Hear ${esc(w.la)}">${SPK}</button>`:'<span></span>'}</div>`).join('')).join('')}</div>`;
+}
+
+function drillBar(){
+  const act=activeDrills();
+  return `<div class="drills">${availDrills().map(d=>`<button class="dchip${act.includes(d.id)?' on':''}" data-drill="${d.id}" aria-pressed="${act.includes(d.id)}">${d.label}</button>`).join('')}</div>`;
+}
+
+const VERD=s=>s>=10?'Optimē! Perfect!':s>=8?'Bene! Great job!':s>=5?'Satis bene — pretty good!':'Iterum! Try again!';
+const PRAISE=['Rēctē!','Optimē!','Bene!','Euge!'];
+
+function roundHTML(){
+  const s=S.sess,qs=s.qs;
+  if(!qs.length)return `<p>No questions for this choice yet. Turn on more chapters or endings above.</p>`;
+  if(s.i>=qs.length){
+    return `<div class="result"><div class="score">${s.score} / ${qs.length}</div><div class="verdict">${VERD(Math.round(s.score/qs.length*10))}</div>
+    ${s.missed.length?`<p style="margin-top:14px;color:var(--muted)">Look these over:</p><ul class="missed">${s.missed.map(m=>`<li>${m}</li>`).join('')}</ul>`:''}
+    <div class="row" style="justify-content:center"><button class="btn primary" data-act="restart">Play again</button></div></div>`;
+  }
+  const q=qs[s.i],ans=q.picked!==undefined;
+  let prompt=q.prompt;
+  if(q.sent){const fill=ans?q.answer:' ';prompt=`<div class="tap">Fill in the blank</div><div class="sentence">${q.sent.replace('__',`<span class="blank">${fill}</span>`)}</div>`}
+  let body;
+  if(q.kind==='type'){
+    body=ans?`<div class="typein"><input id="typed" value="${esc(q.picked)}" disabled aria-label="Your answer"></div>`:
+    `<form class="typein" id="typeform"><input id="typed" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type here…" aria-label="Your answer"><button class="btn primary">Check</button></form>
+     <div class="macrons">${'āēīōū'.split('').map(c=>`<button type="button" data-mac="${c}">${c}</button>`).join('')}<button type="button" class="btn ghost" data-act="hint" style="min-height:36px;padding:4px 10px">Hint</button></div><div id="hintTxt" class="tap"></div>`;
+  }else{
+    body=`<div class="opts">${q.opts.map((o,i)=>{let c='opt'+(q.la?' la':'');if(ans){if(o===q.answer)c+=' right';else if(o===q.picked)c+=' wrong'}
+      const lab=q.sent&&q.end?'-'+o:o;return `<button class="${c}" data-opt="${i}" ${ans?'disabled':''}><span class="k">${i+1}</span>${lab}</button>`}).join('')}</div>`;
+  }
+  let fb='';
+  if(ans){
+    const ok=q.ok;
+    fb=`<div class="fb ${ok?'ok':'no'}"><div class="v">${ok?PRAISE[s.i%4]+' Correct.':`Nōn rēctē. The answer is <span class="latin">${q.sent&&q.end?'-'+q.answer:q.answer}</span>.`}</div><p>${q.explain}</p></div>
+    <div class="row">${q.w?hearBtn(q.w.la):''}<button class="btn primary grow" data-act="next" id="nextBtn">${s.i+1<qs.length?'Next':'See score'} →</button></div>`;
+  }
+  return `<div class="meta"><span>${s.title} · question ${s.i+1} of ${qs.length} · ${selLabel()}</span><span>✓ ${s.score}</span></div>
+  <div class="progress"><i style="width:${s.i/qs.length*100}%"></i></div>
+  <div class="prompt">${prompt}</div>${body}${fb}`;
+}
+
+function answer(val){
+  const s=S.sess,q=s.qs[s.i];if(q.picked!==undefined)return;
+  q.picked=val;
+  if(q.kind==='type'){const ok=W.filter(x=>!x.hidden&&x.en===q.w.en).some(x=>plain(x.la)===plain(val));q.ok=ok}
+  else q.ok=val===q.answer;
+  if(q.ok){s.score++;addCoin()}
+  else s.missed.push(q.sent?`<span class="latin">${q.sent.replace('__',q.answer)}</span> — ${q.en}`:q.w?`<span class="latin"><b>${q.w.la}</b></span> = ${q.w.en}`:`${q.prompt.replace(/<small>.*<\/small>/,'')} → <b class="latin">${q.answer}</b>`);
+  if(q.w&&S.mode==='quiz')setBox(q.w,q.ok?box(q.w)+1:0);
+  render();const n=$('#nextBtn');if(n)n.focus();
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.say!==undefined){speak(t.dataset.say);return}
+  if(t.dataset.ch){const c=+t.dataset.ch,i=S.sel.indexOf(c);
+    if(i>=0){if(S.sel.length===1)return;S.sel.splice(i,1)}else S.sel.push(c);
+    store.set('sel',S.sel);S.sess=null;renderChips();render();return}
+  if(t.dataset.mode){S.mode=t.dataset.mode;store.set('mode',S.mode);S.sess=null;render();return}
+  if(t.dataset.pzch){S.sess.ch=+t.dataset.pzch;render();return}
+  if(t.dataset.pzpart){S.sess.part=t.dataset.pzpart;render();return}
+  if(t.dataset.bank!==undefined){const gs=[...document.querySelectorAll('#para .gap')];
+    let g=(lastGap&&!lastGap.readOnly&&!lastGap.value)?lastGap:gs.find(x=>!x.value&&!x.readOnly);
+    if(!g&&lastGap&&!lastGap.readOnly)g=lastGap;
+    if(g){g.value=t.dataset.bank;g.classList.remove('no');const nx=gs.slice(gs.indexOf(g)+1).find(x=>!x.value&&!x.readOnly);(nx||g).focus();lastGap=nx||g}
+    document.querySelectorAll('.bank button').forEach(b=>b.classList.toggle('used',gs.some(x=>x.value===b.dataset.bank)));return}
+  if(t.dataset.act==='pzcheck'){pzCheck();return}
+  if(t.dataset.act==='pzretry'){document.querySelectorAll('#para .gap.no').forEach(g=>{g.value='';g.classList.remove('no');const f=g.nextElementSibling;if(f&&f.classList.contains('fix'))f.remove()});const f=document.querySelector('#para .gap:not([readonly])');if(f)f.focus();$('#pzres').textContent='';return}
+  if(t.dataset.act==='pzshowall'){document.querySelectorAll('#para .gap').forEach(g=>{if(!g.classList.contains('ok')){g.value=g.dataset.a;g.classList.remove('no');g.readOnly=true;const f=g.nextElementSibling;if(f&&f.classList.contains('fix'))f.remove()}});$('#pzres').textContent='Answers shown. Read the whole paragraph out loud.';return}
+  if(t.dataset.act==='pzshow'){const m=$('#pzm'+t.dataset.i);m.hidden=false;t.hidden=true;return}
+  if(t.dataset.act==='pzok'||t.dataset.act==='pzno'){const r=t.parentElement;
+    if(t.dataset.act==='pzok'){const k='C'+S.sess.ch+t.dataset.i;if(!S.sess.paid[k]){S.sess.paid[k]=1;addCoin()}}
+    r.querySelectorAll('[data-act="pzok"],[data-act="pzno"]').forEach(b=>b.remove());
+    r.insertAdjacentHTML('beforeend',`<span class="tap">${t.dataset.act==='pzok'?'Bene! Say it out loud once more.':'Copy the good answer into your own words, then say it aloud.'}</span>`);return}
+
+  if(t.dataset.dir){S.dir=t.dataset.dir;S.sess.flip=false;render();return}
+  if(t.dataset.sayMode){S.sayMode=t.dataset.sayMode;S.sess.shown=false;render();return}
+  if(t.dataset.drill){let a=activeDrills().slice();const id=t.dataset.drill;
+    if(a.includes(id)){if(a.length===1)return;a=a.filter(x=>x!==id)}else a.push(id);
+    S.drills=a;store.set('drills',a);S.sess=null;render();return}
+  if(t.dataset.opt!==undefined){const q=S.sess.qs[S.sess.i];answer(q.opts[+t.dataset.opt]);return}
+  if(t.dataset.mac){const i=$('#typed');if(i){const p=i.selectionStart??i.value.length;i.value=i.value.slice(0,p)+t.dataset.mac+i.value.slice(i.selectionEnd??p);i.focus();i.setSelectionRange(p+1,p+1)}return}
+  if(t.dataset.p){S.pron=t.dataset.p;store.set('pron',S.pron);paintPron();if(S.mode==='say')render();return}
+  const a=t.dataset.act,s=S.sess;
+  if(a==='flip'){s.flip=!s.flip;if(s.flip&&S.dir==='en')speak(s.deck[s.i].la);render()}
+  else if(a==='knew'){const w=s.deck[s.i];setBox(w,box(w)+1);s.known++;addCoin();s.i++;s.flip=false;render()}
+  else if(a==='nope'){setBox(s.deck[s.i],0);s.i++;s.flip=false;render()}
+  else if(a==='next'){s.i++;render()}
+  else if(a==='restart'){S.sess=null;render()}
+  else if(a==='hint'){const q=s.qs[s.i];$('#hintTxt').textContent=`Starts with “${q.answer.slice(0,2)}…” and has ${plain(q.answer).length} letters.`}
+  else if(a==='reveal'){s.shown=true;render();speak(s.deck[s.i].la)}
+  else if(a==='saynext'){s.i++;render()}
+  else if(a==='sayok'){const w=s.deck[s.i];setBox(w,box(w)+1);addCoin();s.i++;s.shown=false;render()}
+  else if(a==='saynope'){s.i++;s.shown=false;render()}
+});
+document.addEventListener('submit',e=>{if(e.target.id==='typeform'){e.preventDefault();const v=$('#typed').value.trim();if(v)answer(v)}});
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  const s=S.sess;if(!s)return;
+  if(s.qs&&s.i<s.qs.length){const q=s.qs[s.i];
+    if(q.picked===undefined&&q.kind==='mc'&&/^[1-4]$/.test(e.key)&&q.opts[+e.key-1])answer(q.opts[+e.key-1]);
+    else if(q.picked!==undefined&&e.key==='Enter'){e.preventDefault();s.i++;render()}}
+  if(S.mode==='cards'&&s.deck&&s.i<s.deck.length&&e.key===' '){e.preventDefault();s.flip=!s.flip;render()}
+});
+
+function paintPron(){document.querySelectorAll('#pron button').forEach(b=>b.classList.toggle('on',b.dataset.p===S.pron))}
+$('#resetBox').addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.id==='reset'){$('#resetBox').innerHTML='<span>Erase all progress and coins?</span><button class="link" id="rsYes">Yes, erase</button><button class="link" id="rsNo">Keep it</button>'}
+  else if(t.id==='rsYes'){S.box={};S.coins=0;store.set('box',{});store.set('coins',0);paintCoins();renderChips();S.sess=null;render();$('#resetBox').innerHTML='<button class="link" id="reset">Reset progress</button>'}
+  else if(t.id==='rsNo'){$('#resetBox').innerHTML='<button class="link" id="reset">Reset progress</button>'}
+});
+
+paintCoins();paintPron();renderChips();render();
+</script>
+</body>
+</html>
