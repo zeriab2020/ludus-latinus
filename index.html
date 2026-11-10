@@ -48,8 +48,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .coins svg{width:20px;height:20px}
 
 /* chapters */
-.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media (max-width:600px){.chips{grid-template-columns:repeat(2,1fr)}}
+.chips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:600px){.chips{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .chip{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
 .chip .cap{font-family:var(--display);font-weight:700;font-size:.78rem;letter-spacing:.1em;color:var(--muted)}
 .chip .ct{font-family:var(--latin);font-style:italic;font-size:1rem;line-height:1.2}
@@ -158,6 +158,24 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 .model .m{font-family:var(--latin);font-size:1.2rem;font-weight:700;color:var(--good)}
 .model .row{margin:0}
 .pzscore{font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+@media (max-width:480px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:var(--sunk);border-radius:10px;padding:12px}
+.stat b{display:block;font-family:var(--display);font-size:1.7rem;font-variant-numeric:tabular-nums}
+.stat span{font-size:.82rem;color:var(--muted)}
+.pg h3{font-family:var(--display);letter-spacing:.08em;font-size:.95rem;color:var(--accent);margin:20px 0 8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.chrow{display:grid;grid-template-columns:5.5em minmax(0,1fr) 3.5em;gap:10px;align-items:center;padding:4px 0}
+.chrow .bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.chrow .bar i{display:block;height:100%;background:var(--good)}
+.chrow .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.logt{width:100%;border-collapse:collapse;font-size:.92rem}
+.logt td,.logt th{text-align:left;padding:6px 8px;border-bottom:1px dashed var(--line)}
+.logt th{color:var(--muted);font-weight:700;font-size:.8rem}
+.logt td.n{font-variant-numeric:tabular-nums;text-align:right}
+.review{display:flex;flex-wrap:wrap;gap:6px}
+.review span{font-family:var(--latin);background:var(--bad-soft);color:var(--bad);border-radius:999px;padding:3px 10px}
+.code{width:100%;min-height:80px;font-family:ui-monospace,monospace;font-size:.8rem;padding:10px;border:1.5px solid var(--line);border-radius:10px;background:var(--sunk);color:var(--ink);word-break:break-all}
+.note{font-size:.85rem;color:var(--muted);margin:6px 0 0}
 
 .wl h3{font-family:var(--display);letter-spacing:.08em;font-size:.95rem;margin:18px 0 6px;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:6px}
 .wl h3:first-child{margin-top:0}
@@ -179,7 +197,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline
 
 <div class="wrap">
   <header class="runhead">
-    <h1 class="brand">LŪDUS LATĪNUS<small>Familia Rōmāna · vocabulary practice · Capitula I–IV</small></h1>
+    <h1 class="brand">LŪDUS LATĪNUS<small>Familia Rōmāna · vocabulary practice · Capitula I–V</small></h1>
     <span class="coins" id="coins" title="Earn a coin for every right answer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".25"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg><b id="coinN">0</b><span id="coinW">nummī</span></span>
   </header>
 
@@ -204,8 +222,8 @@ const store={get(k,d){try{const v=localStorage.getItem('ludus_'+k);return v?JSON
   set(k,v){try{localStorage.setItem('ludus_'+k,JSON.stringify(v))}catch(e){}}};
 
 /* ---------- vocabulary ---------- */
-const CH={1:'Imperium Rōmānum',2:'Familia Rōmāna',3:'Puer Improbus',4:'Dominus et Servī'};
-const RN=['','I','II','III','IV'];
+const CH={1:'Imperium Rōmānum',2:'Familia Rōmāna',3:'Puer Improbus',4:'Dominus et Servī',5:'Vīlla et Hortus'};
+const RN=['','I','II','III','IV','V'];
 const W=[];
 const N=(ch,la,gen,g,en,o={})=>W.push(Object.assign({ch,t:'n',la,gen,g,en},o));
 const A=(ch,la,form,en)=>W.push({ch,t:'a',la,form,en});
@@ -355,6 +373,28 @@ X(4,'vocātīvus','vocative (calling form)','g');
 X(4,'imperātīvus','imperative (command form)','g');
 X(4,'indicātīvus','indicative (statement form)','g');
 
+// Capitulum V — Vīlla et Hortus
+N(5,'vīlla','vīllae','f','country house, villa',{loc:1});
+N(5,'hortus','hortī','m','garden',{loc:1});
+N(5,'ātrium','ātriī','n','atrium (main hall)',{loc:1});
+N(5,'peristȳlum','peristȳlī','n','peristyle (courtyard garden with columns)',{loc:1});
+N(5,'cubiculum','cubiculī','n','bedroom',{loc:1});
+N(5,'impluvium','impluviī','n','rain pool (in the atrium floor)',{loc:1});
+N(5,'compluvium','compluviī','n','opening in the roof',{loc:1});
+N(5,'tēctum','tēctī','n','roof',{loc:1});
+N(5,'ōstium','ōstiī','n','door, entrance');
+N(5,'aqua','aquae','f','water');
+N(5,'rosa','rosae','f','rose');
+N(5,'līlium','līliī','n','lily');
+A(5,'pulcher','pulcher -chra -chrum','beautiful, pretty');
+V(5,'habitat','habitā',1,'lives','Live!');
+V(5,'amat','amā',1,'loves, likes','Love!');
+V(5,'carpit','carpe',3,'picks','Pick!');
+V(5,'ambulat','ambulā',1,'walks','Walk!');
+X(5,'cum','with','c'); X(5,'sine','without','c');
+X(5,'eōs','them (men, boys)','p'); X(5,'eās','them (women, girls)','p');
+X(5,'ablātīvus','ablative (form after in, cum, sine)','g');
+
 /* ---------- Pensum sentences (fill the blank) ---------- */
 const P=[
  [1,'Rōma in Itali__ est.','ā',['a','ā','ae'],'Rome is in Italy.'],
@@ -408,6 +448,22 @@ const P=[
  [4,'Ubi sunt nummī me__?','ī',['us','ī','a'],'Where are my coins?'],
  [4,'Ecce baculum in mēns__.','ā',['a','ā','ae'],'Look, the stick is on the table.'],
  [4,'Sūme sacculum tuum, bon__ serve!','e',['us','e','a'],'Pick up your purse, good slave!'],
+ [5,'Iūlius in vīll__ habitat.','ā',['a','ā','am'],'Julius lives in a villa.'],
+ [5,'In hort__ sunt multae rosae.','ō',['us','ō','um'],'In the garden there are many roses.'],
+ [5,'In ātri__ est impluvium.','ō',['um','ō','a'],'In the atrium there is a rain pool.'],
+ [5,'Iūlia ros__ carpit.','ās',['a','ās','ae'],'Julia picks roses.'],
+ [5,'Iūlia līli__ quoque carpit.','a',['um','a','ō'],'Julia picks lilies too.'],
+ [5,'Iūlius serv__ vocat.','ōs',['um','ōs','ī'],'Julius calls the slaves.'],
+ [5,'Mārcus cum Quīnt__ venit.','ō',['us','ō','um'],'Marcus comes with Quintus.'],
+ [5,'Aemilia sine Iūli__ est.','ā',['a','ā','am'],'Aemilia is without Julia.'],
+ [5,'Puerī rīd__.','ent',['et','ent','unt'],'The boys laugh.'],
+ [5,'Mārcus et Quīntus ambul__.','ant',['at','ant','ent'],'Marcus and Quintus walk.'],
+ [5,'Servī ven__.','iunt',['it','unt','iunt'],'The slaves come.'],
+ [5,'Tac__, puerī!','ēte',['ē','ēte','ent'],'Be quiet, boys!'],
+ [5,'Ven__, servī!','īte',['ī','īte','iunt'],'Come, slaves!'],
+ [5,'Hortus pulch__ est.','er',['er','ra','rum'],'The garden is beautiful.'],
+ [5,'Rosa pulch__ est.','ra',['er','ra','rum'],'The rose is beautiful.'],
+ [5,'Iūlia rosās am__.','at',['at','ant','et'],'Julia loves roses.'],
 ];
 
 /* ---------- helpers ---------- */
@@ -430,11 +486,17 @@ function decl(w){
 }
 function forms(w){
   const k=decl(w); if(!k)return null; const s=k.s;
-  if(k.d===1)return{d:1,s,gen:s+'ae',acc:s+'am',abl:s+'ā',pl:s+'ae',genpl:s+'ārum',voc:w.la};
-  if(k.d==='2n')return{d:'2n',s,gen:s+'ī',acc:w.la,abl:s+'ō',pl:s+'a',genpl:s+'ōrum',voc:w.la};
+  if(k.d===1)return{d:1,s,accpl:s+'ās',gen:s+'ae',acc:s+'am',abl:s+'ā',pl:s+'ae',genpl:s+'ārum',voc:w.la};
+  if(k.d==='2n')return{d:'2n',s,accpl:s+'a',gen:s+'ī',acc:w.la,abl:s+'ō',pl:s+'a',genpl:s+'ōrum',voc:w.la};
   let voc=w.la.endsWith('ius')?s.slice(0,-1)+'ī':(w.la.endsWith('us')?s+'e':w.la);
-  return{d:2,s,gen:s+'ī',acc:s+'um',abl:s+'ō',pl:s+'ī',genpl:s+'ōrum',voc};
+  return{d:2,s,accpl:s+'ōs',gen:s+'ī',acc:s+'um',abl:s+'ō',pl:s+'ī',genpl:s+'ōrum',voc};
 }
+const PLV={1:'ant',2:'ent',3:'unt',4:'iunt'},IMPL={1:'āte',2:'ēte',3:'ite',4:'īte'};
+const plv=w=>w.la.slice(0,-2)+PLV[w.c], impl=w=>w.la.slice(0,-2)+IMPL[w.c];
+function they(en){const ws=first(en).split(' ');let a=ws[0];
+  if(a==='is')a='are';else if(a==='has')a='have';else if(/ies$/.test(a))a=a.replace(/ies$/,'y');
+  else if(/(sh|ch|ss|x|o)es$/.test(a))a=a.slice(0,-2);else if(/s$/.test(a))a=a.slice(0,-1);
+  ws[0]=a;return ws.join(' ')}
 function detail(w){
   if(w.t==='n'){
     if(w.plOnly)return `<b>${w.la}, ${w.gen}</b> · ${G[w.g]} noun · used only in the plural`;
@@ -446,14 +508,17 @@ function detail(w){
   if(w.t==='a')return `<b>${w.form}</b> · adjective<br>-us with masculine, -a with feminine, -um with neuter words`;
   if(w.t==='v'){
     const c=w.c==='irr'?'irregular':`type [${w.c}]`;
-    return `<b>${w.la}</b> = he/she ${first(w.en)} · ${c} verb<br>Command: <b>${w.imp}!</b> = “${w.ien}”`;
+    const more=(w.c!=='irr'&&maxCh()>=5)?`<br>They: <b>${plv(w)}</b> · command to many: <b>${impl(w)}!</b>`:'';
+    return `<b>${w.la}</b> = he/she ${first(w.en)} · ${c} verb<br>Command: <b>${w.imp}!</b> = “${w.ien}”`+more;
   }
   return POS[w.t]||'word';
 }
 const short=w=>w.t==='n'?`${w.la}, ${w.gen} (${w.g}.)`:w.t==='a'?w.form:w.t==='v'?`${w.la} · ${w.imp}!`:POS[w.t];
 
 /* ---------- state ---------- */
-const S={sel:store.get('sel',[1,2,3,4]),mode:store.get('mode','cards'),pron:store.get('pron','classical'),
+const LOG=store.get('log',[]);
+function logIt(mode,score,total){LOG.push({d:new Date().toISOString(),m:mode,ch:S.sel.slice().sort(),s:score,n:total});if(LOG.length>400)LOG.splice(0,LOG.length-400);store.set('log',LOG)}
+const S={sel:store.get('sel',[1,2,3,4,5]),mode:store.get('mode','cards'),pron:store.get('pron','classical'),
   coins:store.get('coins',0),box:store.get('box',{}),dir:'la',sayMode:'read',drills:store.get('drills',null),sess:null};
 const box=w=>S.box[key(w)]||0;
 function setBox(w,v){S.box[key(w)]=Math.max(0,Math.min(3,v));store.set('box',S.box);renderChips()}
@@ -524,7 +589,8 @@ const DR=[
  {id:'gender',ch:1,label:'Gender m / f / n'},{id:'plural',ch:1,label:'Plural'},{id:'inabl',ch:1,label:'in + -ā / -ō'},
  {id:'gen',ch:2,label:'“of” -ī / -ae'},{id:'genpl',ch:2,label:'“of” -ōrum / -ārum'},
  {id:'acc',ch:3,label:'Object -um / -am'},{id:'verbend',ch:3,label:'Verb -at / -et / -it'},
- {id:'voc',ch:4,label:'Calling -e'},{id:'imp',ch:4,label:'Command form'},{id:'ind',ch:4,label:'Command → statement'}];
+ {id:'voc',ch:4,label:'Calling -e'},{id:'imp',ch:4,label:'Command form'},{id:'ind',ch:4,label:'Command → statement'},
+ {id:'accpl',ch:5,label:'Many objects -ōs / -ās / -a'},{id:'cum',ch:5,label:'cum / sine + -ō / -ā'},{id:'plverb',ch:5,label:'They: -nt'},{id:'impl',ch:5,label:'Command to many: -te'}];
 const EX={
  gender:'-us words are usually masculine, -a feminine, -um neuter. Lands in -us like Aegyptus are feminine.',
  plural:'Plural: -us → -ī, -a → -ae, -um → -a.',
@@ -535,7 +601,11 @@ const EX={
  verbend:'He/she does it: type [1] ends -at, [2] -et, [3] and [4] -it.',
  voc:'Calling someone (vocative): -us → -e. Words in -ius → -ī (Iūlius → Iūlī, fīlius → fīlī). Other words stay the same.',
  imp:'Command: [1] -at → -ā, [2] -et → -ē, [3] -it → -e, [4] -it → -ī.',
- ind:'Command → statement: -ā → -at, -ē → -et, -e and -ī → -it.'};
+ ind:'Command → statement: -ā → -at, -ē → -et, -e and -ī → -it.',
+ accpl:'Object, more than one (accusative plural): -us → -ōs, -a → -ās, -um → -a.',
+ cum:'After cum (with) and sine (without), use the ablative: -us and -um → -ō, -a → -ā.',
+ plverb:'They do it: [1] -at → -ant, [2] -et → -ent, [3] -it → -unt, [4] -it → -iunt.',
+ impl:'Command to more than one person: [1] -āte, [2] -ēte, [3] -ite, [4] -īte.'};
 
 function drillQ(id,w){
   const f=w.t==='n'?forms(w):null, s=f&&f.s, L=`<span class="latin">${w.la}</span>`;
@@ -560,6 +630,14 @@ function drillQ(id,w){
      return{...base,prompt:`“he/she ${first(w.en)}” — pick the right Latin`,opts:mkOpts(w.la,[st+'at',st+'et',st+'it']),answer:w.la};}
    case 'imp': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
      return{...base,prompt:`${L} means “he/she ${first(w.en)}.” How do you order someone: “${w.ien}”`,opts:mkOpts(w.imp,[st+'ā',st+'ē',st+'e',st+'ī']),answer:w.imp+''};}
+   case 'accpl': if(!f||w.proper||w.name)return null;
+     return{...base,prompt:`<span class="latin">Iūlius ___ videt.</span><small>Julius sees them: more than one ${first(w.en)} · from ${w.la}</small>`,opts:mkOpts(f.accpl,[s+'ōs',s+'ās',s+'a',s+'ī',s+'ae',s+'um']),answer:f.accpl};
+   case 'cum': if(!f||!w.person)return null;{const sub=w.la==='Quīntus'?'Mārcus':'Quīntus',sine=Math.random()<.35;
+     return{...base,prompt:`<span class="latin">${sub} ${sine?'sine':'cum'} ___ venit.</span><small>${sub} comes ${sine?'without':'with'} ${w.name?w.la:'the '+first(w.en)}</small>`,opts:mkOpts(f.abl,[s+'ō',s+'ā',s+'um',s+'am',w.la]),answer:f.abl};}
+   case 'plverb': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
+     return{...base,prompt:`<span class="latin">Puerī ___.</span><small>The boys ${they(w.en)} · from ${w.la}</small>`,opts:mkOpts(plv(w),[st+'ant',st+'ent',st+'unt',st+'iunt',w.la]),answer:plv(w)};}
+   case 'impl': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
+     return{...base,prompt:`Tell all the boys “${w.ien}” — <span class="latin">Puerī, ___!</span>`,opts:mkOpts(impl(w),[st+'āte',st+'ēte',st+'ite',st+'īte',w.imp]),answer:impl(w)};}
    case 'ind': if(w.t!=='v'||w.c==='irr')return null;{const st=w.la.slice(0,-2);
      return{...base,prompt:`“<span class="latin">${w.imp}!</span>” is a command. Which one means “he/she ${first(w.en)}”?`,opts:mkOpts(w.la,[st+'at',st+'et',st+'it']),answer:w.la};}
   }
@@ -604,7 +682,10 @@ const PZ={
  C:[['Quis Iūliam pulsat?','Mārcus Iūliam pulsat.'],['Cūr Iūlia plōrat?','Iūlia plōrat, quia Mārcus eam pulsat.'],['Quem Quīntus videt?','Quīntus Mārcum videt.'],['Quis Aemiliam vocat?','Iūlia Aemiliam vocat.'],['Cūr Iūlius Quīntum nōn audit?','Iūlius Quīntum nōn audit, quia dormit.'],['Quem Aemilia verberat?','Aemilia Mārcum verberat.'],['Rīdetne Iūlia?','Iūlia nōn rīdet, sed plōrat.'],['Num “Iūliam” nōminātīvus est?','“Iūliam” nōn nōminātīvus, sed accūsātīvus est.']]},
 4:{A:`Iūlius pecūni{am} numer{at}. In sacculō Iūli{ī} sunt decem nummī. Iūlius Mēd{um} voc{at}: “Mēd{e}! Ven{ī}!” Mēdus ven{it} et dominum salūt{at}: “Salvē, domin{e}!”|Iūlius: “Respond{ē}, serv{e}! Ubi est pecūnia me{a}?” Mēdus Dāv{um} accūs{at}. Iūlius: “Pōn{e} sacculum tuum in mēns{ā}, Dāve!” Dāvus pār{et}: sacculum su{um} in mēnsā pōn{it}. Sacculus Dāvī vacu{us} est.|Iūlius: “Sūm{e} sacculum tuum et discēd{e}, bon{e} serve!” Dāvus discēd{it}. Mēdus quoque abest, quia pecūniam dominī habet!`,
  B:`In sacculō Iūliī est {pecūnia}. In sacculō sunt decem {nummī}. Mēdus {adest}; Dāvus {abest}. Dāvus dominum {salūtat}: “Salvē, domine!”|Iūlius: “Ubi sunt nummī meī?” Dāvus {tacet}. Mēdus Dāvum {accūsat}. Dāvus sacculum in {mēnsā} {pōnit}. {Sacculus} Dāvī {vacuus} est. Iūlius {baculum} suum in mēnsā pōnit.|Dominus {imperat}, bonus servus {pāret}. Dāvus sacculum suum {sūmit} et discēdit.`,
- C:[['Quot nummī sunt in sacculō Iūliī?','In sacculō Iūliī decem nummī sunt.'],['Adestne Dāvus in scaenā prīmā?','Dāvus nōn adest, sed abest.'],['Quis Dāvum vocat?','Mēdus Dāvum vocat.'],['Quem Mēdus accūsat?','Mēdus Dāvum accūsat.'],['Estne sacculus Dāvī vacuus?','Sacculus Dāvī vacuus est.'],['Quid Iūlius pōnit in sacculō Dāvī?','Iūlius ūnum nummum in sacculō Dāvī pōnit.'],['Cūr Mēdus discēdit?','Mēdus discēdit, quia pecūniam dominī habet.'],['Cūr Mēdus Iūlium nōn audit?','Mēdus Iūlium nōn audit, quia abest.']]}
+ C:[['Quot nummī sunt in sacculō Iūliī?','In sacculō Iūliī decem nummī sunt.'],['Adestne Dāvus in scaenā prīmā?','Dāvus nōn adest, sed abest.'],['Quis Dāvum vocat?','Mēdus Dāvum vocat.'],['Quem Mēdus accūsat?','Mēdus Dāvum accūsat.'],['Estne sacculus Dāvī vacuus?','Sacculus Dāvī vacuus est.'],['Quid Iūlius pōnit in sacculō Dāvī?','Iūlius ūnum nummum in sacculō Dāvī pōnit.'],['Cūr Mēdus discēdit?','Mēdus discēdit, quia pecūniam dominī habet.'],['Cūr Mēdus Iūlium nōn audit?','Mēdus Iūlium nōn audit, quia abest.']]},
+5:{A:`Iūlius in vīll{ā} magn{ā} habitat. Vīlla Iūliī in Itali{ā} est. In vīllā est ātri{um} magnum. In ātri{ō} est impluvium; in impluvi{ō} est aqua.|In hort{ō} sunt multae ros{ae} et mult{a} līlia. Iūlia ros{ās} et līli{a} carpit. Iūlia rosās am{at}. Hortus pulch{er} est; rosa pulch{ra} est.|Mārcus cum Quīnt{ō} in hortō ambul{at}. Puerī rīd{ent}. Iūlius serv{ōs} vocat: “Ven{īte}, servī!” Servī ven{iunt}.`,
+ B:`Familia Iūliī in magnā {vīllā} habitat. In vīllā est {hortus} magnus. In hortō sunt multae {rosae} et multa {līlia}.|In ātriō est {impluvium}. In {tēctō} est {compluvium}. {Aqua} in impluviō est. Iūlius in {cubiculō} dormit.|Iūlia rosās {carpit}, quia rosās {amat}. Mārcus {cum} Quīntō venit; Iūlia {sine} Mārcō est. Puerī in hortō {ambulant}. Hortus {pulcher} est.`,
+ C:[['Ubi habitat Iūlius?','Iūlius in vīllā habitat.'],['Quid est in hortō?','In hortō sunt rosae et līlia.'],['Quid Iūlia carpit?','Iūlia rosās et līlia carpit.'],['Cūr Iūlia rosās carpit?','Iūlia rosās carpit, quia rosās amat.'],['Ubi est impluvium?','Impluvium in ātriō est.'],['Quid est in impluviō?','In impluviō aqua est.'],['Estne hortus pulcher?','Hortus pulcher est.'],['Num Mārcus sine Quīntō venit?','Mārcus nōn sine Quīntō, sed cum Quīntō venit.']]}
 };
 const PZINFO={A:'Write the missing endings. Press Enter to jump to the next blank.',B:'Write the missing words. Tap a word in the box to fill the blank you are on.',C:'Answer each question in Latin with a full sentence. Then check the model answer.'};
 function paraHTML(txt,part){
@@ -644,6 +725,7 @@ function pzCheck(){
     else{g.classList.add('no');if(v){const f=document.createElement('span');f.className='fix';f.textContent=a;g.after(f)}}
   });
   const n=gaps.length;
+  logIt('pensa-'+z.part+z.ch,ok,n);
   $('#pzres').innerHTML=ok===n?`<span style="color:var(--good)">Optimē! All ${n} right.</span>`:`${ok} of ${n} right. Fix the red ones and check again.`;
 }
 document.addEventListener('keydown',e=>{
@@ -653,15 +735,51 @@ document.addEventListener('keydown',e=>{
 let lastGap=null;
 document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('gap'))lastGap=e.target});
 
+/* ---------- progress ---------- */
+const MNAME={cards:'Flashcards',quiz:'Quiz',endings:'Endings',pensum:'Quick fill'};
+const mName=m=>m.startsWith('pensa-')?`Pēnsum ${m[6]} · Cap. ${RN[+m[7]]}`:(MNAME[m]||m);
+function progHTML(){
+  const all=W.filter(w=>!w.hidden),known=all.filter(w=>box(w)>=2).length;
+  const days=new Set(LOG.map(l=>l.d.slice(0,10))).size;
+  const review=all.filter(w=>S.box[key(w)]===0);
+  const last=LOG.slice(-15).reverse();
+  const fmt=d=>new Date(d).toLocaleDateString(undefined,{month:'short',day:'numeric'})+' '+new Date(d).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+  return `<div class="pg"><div class="stats">
+   <div class="stat"><b>${known}</b><span>of ${all.length} words known well</span></div>
+   <div class="stat"><b>${S.coins}</b><span>${S.coins===1?'nummus':'nummī'} earned</span></div>
+   <div class="stat"><b>${days}</b><span>${days===1?'day':'days'} practiced</span></div></div>
+  <h3>CHAPTERS</h3>${[1,2,3,4,5].map(c=>{const p=mastery(c);return `<div class="chrow"><span>Cap. ${RN[c]}</span><span class="bar"><i style="width:${p}%"></i></span><span class="n">${p}%</span></div>`}).join('')}
+  <h3>WORDS TO REVIEW</h3>${review.length?`<div class="review">${review.slice(0,40).map(w=>`<span title="${esc(w.en)}">${w.la}</span>`).join('')}</div><p class="note">Words he missed last time. They come up more often in Flashcards and Quiz.</p>`:'<p class="note">None right now. Optimē!</p>'}
+  <h3>RECENT PRACTICE</h3>${last.length?`<div style="overflow-x:auto"><table class="logt"><tr><th>When</th><th>Practice</th><th>Chapters</th><th style="text-align:right">Score</th></tr>${last.map(l=>`<tr><td>${fmt(l.d)}</td><td>${mName(l.m)}</td><td>${l.ch.map(c=>RN[c]).join(', ')}</td><td class="n">${l.s} / ${l.n}</td></tr>`).join('')}</table></div>`:'<p class="note">Finished rounds will show up here.</p>'}
+  <h3>SAVE &amp; LOAD</h3>
+  <p class="note" style="margin-bottom:10px">Progress saves by itself on this device and browser. Save a backup to keep it safe or to move it to another device.</p>
+  <div class="row" style="margin-top:0"><button class="btn primary" data-act="pgsave">Save progress file</button><label class="btn" for="pgfile" style="cursor:pointer">Load progress file</label><input type="file" id="pgfile" accept=".json,application/json" hidden></div>
+  <div class="row"><button class="btn" data-act="pgcode">Show progress code</button><button class="btn" data-act="pgpaste">Paste a code</button></div>
+  <div id="pgbox"></div></div>`;
+}
+function progData(){return{app:'ludus-latinus',v:1,saved:new Date().toISOString(),box:S.box,coins:S.coins,log:LOG}}
+function loadProg(o){
+  if(!o||o.app!=='ludus-latinus'||typeof o.box!=='object')throw new Error('bad');
+  S.box=o.box;S.coins=+o.coins||0;LOG.length=0;(o.log||[]).forEach(l=>LOG.push(l));
+  store.set('box',S.box);store.set('coins',S.coins);store.set('log',LOG);paintCoins();renderChips();render();
+  $('#pgbox').innerHTML=`<p class="note" style="color:var(--good);font-weight:700">Progress loaded: ${S.coins} coins, ${LOG.length} practice rounds.</p>`;
+}
+const toCode=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const fromCode=c=>JSON.parse(decodeURIComponent(escape(atob(c.trim()))));
+document.addEventListener('change',e=>{
+  if(e.target.id!=='pgfile'||!e.target.files[0])return;
+  const r=new FileReader();r.onload=()=>{try{loadProg(JSON.parse(r.result))}catch(err){$('#pgbox').innerHTML='<p class="note" style="color:var(--bad)">That file isn’t a Lūdus Latīnus progress file. Pick the file named ludus-latinus-progress….json.</p>'}};r.readAsText(e.target.files[0]);
+});
+
 /* ---------- rendering ---------- */
-const MODES=[['cards','Flashcards','Chartae'],['quiz','Quiz','Probātiō'],['endings','Endings','Terminātiōnēs'],['pensum','Quick fill','Supplē'],['pensa','Pensum','A · B · C'],['say','Say it','Dīc!'],['list','Word list','Index']];
+const MODES=[['cards','Flashcards','Chartae'],['quiz','Quiz','Probātiō'],['endings','Endings','Terminātiōnēs'],['pensum','Quick fill','Supplē'],['pensa','Pensum','A · B · C'],['say','Say it','Dīc!'],['list','Word list','Index'],['prog','Progress','Prōfectus']];
 function renderTabs(){$('#tabs').innerHTML=MODES.map(([id,en,la])=>`<button class="tab${S.mode===id?' on':''}" data-mode="${id}">${en}<span>${la}</span></button>`).join('')}
 function renderChips(){
-  $('#chips').innerHTML=[1,2,3,4].map(c=>{const on=S.sel.includes(c),p=mastery(c);
+  $('#chips').innerHTML=[1,2,3,4,5].map(c=>{const on=S.sel.includes(c),p=mastery(c);
     return `<button class="chip${on?' on':''}" data-ch="${c}" aria-pressed="${on}"><span class="cap">CAP. ${RN[c]}</span><span class="ct">${CH[c]}</span><span class="bar"><i style="width:${p}%"></i></span><span class="pc">${p}% learned</span></button>`}).join('');
 }
 const dots=w=>`<span class="dots" title="How well you know it">${[0,1,2].map(i=>`<i class="${box(w)>i?'f':''}"></i>`).join('')}</span>`;
-const selLabel=()=>S.sel.length===4?'all chapters':'Cap. '+S.sel.slice().sort().map(c=>RN[c]).join(', ');
+const selLabel=()=>S.sel.length===5?'all chapters':'Cap. '+S.sel.slice().sort().map(c=>RN[c]).join(', ');
 
 function render(){
   renderTabs();
@@ -671,6 +789,7 @@ function render(){
   else if(m==='say')st.innerHTML=sayHTML();
   else if(m==='list')st.innerHTML=listHTML();
   else if(m==='pensa')st.innerHTML=pensaHTML();
+  else if(m==='prog')st.innerHTML=progHTML();
   else st.innerHTML=(m==='endings'?drillBar():'')+roundHTML();
   const inp=$('#typed');if(inp)inp.focus();
   lastGap=null;
@@ -678,6 +797,7 @@ function render(){
 
 function cardsHTML(){
   const s=S.sess,d=s.deck;
+  if(s.i>=d.length&&!s.logged){s.logged=1;logIt('cards',s.known,d.length)}
   if(s.i>=d.length)return `<div class="result"><div class="verdict">Fīnis!</div><p>You went through all ${d.length} cards (${selLabel()}). You knew <b>${s.known}</b>.</p><div class="row" style="justify-content:center"><button class="btn primary" data-act="restart">Go again</button></div></div>`;
   const w=d[s.i];
   const front=S.dir==='la'?`<span class="big">${w.la}</span>`:`<span class="big en">${w.en}</span>`;
@@ -723,6 +843,7 @@ const PRAISE=['Rēctē!','Optimē!','Bene!','Euge!'];
 function roundHTML(){
   const s=S.sess,qs=s.qs;
   if(!qs.length)return `<p>No questions for this choice yet. Turn on more chapters or endings above.</p>`;
+  if(s.i>=qs.length&&!s.logged){s.logged=1;logIt(S.mode,s.score,qs.length)}
   if(s.i>=qs.length){
     return `<div class="result"><div class="score">${s.score} / ${qs.length}</div><div class="verdict">${VERD(Math.round(s.score/qs.length*10))}</div>
     ${s.missed.length?`<p style="margin-top:14px;color:var(--muted)">Look these over:</p><ul class="missed">${s.missed.map(m=>`<li>${m}</li>`).join('')}</ul>`:''}
@@ -778,6 +899,16 @@ document.addEventListener('click',e=>{
     if(g){g.value=t.dataset.bank;g.classList.remove('no');const nx=gs.slice(gs.indexOf(g)+1).find(x=>!x.value&&!x.readOnly);(nx||g).focus();lastGap=nx||g}
     document.querySelectorAll('.bank button').forEach(b=>b.classList.toggle('used',gs.some(x=>x.value===b.dataset.bank)));return}
   if(t.dataset.act==='pzcheck'){pzCheck();return}
+  if(t.dataset.act==='pgsave'){
+    const blob=new Blob([JSON.stringify(progData(),null,1)],{type:'application/json'});const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='ludus-latinus-progress-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();
+    $('#pgbox').innerHTML='<p class="note">If no file downloaded, use “Show progress code” and copy the code into a note or email instead.</p>';return}
+  if(t.dataset.act==='pgcode'){const c=toCode(progData());
+    $('#pgbox').innerHTML=`<textarea class="code" id="pgc" readonly>${c}</textarea><div class="row" style="margin-top:8px"><button class="btn" data-act="pgcopy">Copy code</button></div><p class="note">Keep this code in a note or email. Paste it on any device to bring his progress back.</p>`;return}
+  if(t.dataset.act==='pgcopy'){const ta=$('#pgc');const done=()=>{t.textContent='Copied'};
+    navigator.clipboard&&navigator.clipboard.writeText(ta.value).then(done,()=>{ta.select()})||ta.select();return}
+  if(t.dataset.act==='pgpaste'){$('#pgbox').innerHTML='<textarea class="code" id="pgin" placeholder="Paste the progress code here"></textarea><div class="row" style="margin-top:8px"><button class="btn primary" data-act="pgload">Load this code</button></div>';$('#pgin').focus();return}
+  if(t.dataset.act==='pgload'){try{loadProg(fromCode($('#pgin').value))}catch(err){$('#pgbox').insertAdjacentHTML('beforeend','<p class="note" style="color:var(--bad)">That code didn’t work. Copy the whole code and try again.</p>')}return}
   if(t.dataset.act==='pzretry'){document.querySelectorAll('#para .gap.no').forEach(g=>{g.value='';g.classList.remove('no');const f=g.nextElementSibling;if(f&&f.classList.contains('fix'))f.remove()});const f=document.querySelector('#para .gap:not([readonly])');if(f)f.focus();$('#pzres').textContent='';return}
   if(t.dataset.act==='pzshowall'){document.querySelectorAll('#para .gap').forEach(g=>{if(!g.classList.contains('ok')){g.value=g.dataset.a;g.classList.remove('no');g.readOnly=true;const f=g.nextElementSibling;if(f&&f.classList.contains('fix'))f.remove()}});$('#pzres').textContent='Answers shown. Read the whole paragraph out loud.';return}
   if(t.dataset.act==='pzshow'){const m=$('#pzm'+t.dataset.i);m.hidden=false;t.hidden=true;return}
@@ -820,10 +951,11 @@ function paintPron(){document.querySelectorAll('#pron button').forEach(b=>b.clas
 $('#resetBox').addEventListener('click',e=>{
   const t=e.target.closest('button');if(!t)return;
   if(t.id==='reset'){$('#resetBox').innerHTML='<span>Erase all progress and coins?</span><button class="link" id="rsYes">Yes, erase</button><button class="link" id="rsNo">Keep it</button>'}
-  else if(t.id==='rsYes'){S.box={};S.coins=0;store.set('box',{});store.set('coins',0);paintCoins();renderChips();S.sess=null;render();$('#resetBox').innerHTML='<button class="link" id="reset">Reset progress</button>'}
+  else if(t.id==='rsYes'){S.box={};S.coins=0;store.set('box',{});store.set('coins',0);LOG.length=0;store.set('log',[]);paintCoins();renderChips();S.sess=null;render();$('#resetBox').innerHTML='<button class="link" id="reset">Reset progress</button>'}
   else if(t.id==='rsNo'){$('#resetBox').innerHTML='<button class="link" id="reset">Reset progress</button>'}
 });
 
+if(!store.get('v5',0)){if(!S.sel.includes(5))S.sel.push(5);store.set('sel',S.sel);store.set('v5',1)}
 paintCoins();paintPron();renderChips();render();
 </script>
 </body>
