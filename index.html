@@ -665,6 +665,7 @@ function newSess(){
   }
   if(S.mode==='say')return{deck:weighted(p,p.length),i:0,shown:false};
   if(S.mode==='pensa')return{ch:maxCh(),part:'A',paid:{}};
+  if(S.mode==='test')return{phase:'menu'};
   return{};
 }
 
@@ -736,7 +737,7 @@ let lastGap=null;
 document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('gap'))lastGap=e.target});
 
 /* ---------- progress ---------- */
-const MNAME={cards:'Flashcards',quiz:'Quiz',endings:'Endings',pensum:'Quick fill'};
+const MNAME={cards:'Flashcards',quiz:'Quiz',endings:'Endings',pensum:'Quick fill',test:'Practice test (graded)',tquiz:'Practice quiz (hints)'};
 const mName=m=>m.startsWith('pensa-')?`Pēnsum ${m[6]} · Cap. ${RN[+m[7]]}`:(MNAME[m]||m);
 function progHTML(){
   const all=W.filter(w=>!w.hidden),known=all.filter(w=>box(w)>=2).length;
@@ -772,7 +773,7 @@ document.addEventListener('change',e=>{
 });
 
 /* ---------- rendering ---------- */
-const MODES=[['cards','Flashcards','Chartae'],['quiz','Quiz','Probātiō'],['endings','Endings','Terminātiōnēs'],['pensum','Quick fill','Supplē'],['pensa','Pensum','A · B · C'],['say','Say it','Dīc!'],['list','Word list','Index'],['prog','Progress','Prōfectus']];
+const MODES=[['cards','Flashcards','Chartae'],['quiz','Quiz','Probātiō'],['endings','Endings','Terminātiōnēs'],['pensum','Quick fill','Supplē'],['pensa','Pensum','A · B · C'],['test','Test practice','Exāmen'],['say','Say it','Dīc!'],['list','Word list','Index'],['prog','Progress','Prōfectus']];
 function renderTabs(){$('#tabs').innerHTML=MODES.map(([id,en,la])=>`<button class="tab${S.mode===id?' on':''}" data-mode="${id}">${en}<span>${la}</span></button>`).join('')}
 function renderChips(){
   $('#chips').innerHTML=[1,2,3,4,5].map(c=>{const on=S.sel.includes(c),p=mastery(c);
@@ -790,8 +791,9 @@ function render(){
   else if(m==='list')st.innerHTML=listHTML();
   else if(m==='pensa')st.innerHTML=pensaHTML();
   else if(m==='prog')st.innerHTML=progHTML();
+  else if(m==='test')st.innerHTML=testHTML();
   else st.innerHTML=(m==='endings'?drillBar():'')+roundHTML();
-  const inp=$('#typed');if(inp)inp.focus();
+  const inp=$('#typed')||$('#ttyped');if(inp)inp.focus();
   lastGap=null;
 }
 
@@ -882,6 +884,89 @@ function answer(val){
   if(q.w&&S.mode==='quiz')setBox(q.w,q.ok?box(q.w)+1:0);
   render();const n=$('#nextBtn');if(n)n.focus();
 }
+
+/* ---------- Test practice (practice quiz with hints + graded practice test) ---------- */
+const QW={Ubi:'Ubi = where',Quis:'Quis = who',Quae:'Quae = who (for a woman or girl)',Quid:'Quid = what',Cūr:'Cūr = why. Answer with quia (because).',Quot:'Quot = how many',Quem:'Quem = whom (the object)',Cuius:'Cuius = whose',Num:'Num… expects “no”. Answer with nōn …, sed ….'};
+function qwHint(q){const w=q.split(/[\s?]/)[0];if(QW[w])return QW[w];if(/ne$/.test(w))return '-ne on the first word makes a yes/no question. Answer with a full sentence.';return 'Find the question word first, then look for the answer in the story.'}
+const TN=30;
+function testItems(){
+  const p=pool(),chs=S.sel,out=[];
+  weighted(p,10).forEach(w=>{const q=quizQ(w,p);q.hint=q.kind==='type'?`It is a ${POS[w.t]} from Chapter ${RN[w.ch]}. It starts with “${q.answer.slice(0,2)}…” and has ${plain(q.answer).length} letters.`:q.la?`It is a ${POS[w.t]} from Chapter ${RN[w.ch]}. It starts with “${w.la[0]}”.`:`It is a ${POS[w.t]} from Chapter ${RN[w.ch]}. Say the Latin word out loud and think of the story where you met it.`;q.tag='Vocabulary';out.push(q)});
+  const words=W.filter(w=>chs.includes(w.ch)||(w.name&&w.ch<=maxCh()));
+  const lists=availDrills().map(d=>shuffle(words).map(w=>{const q=drillQ(d.id,w);if(q){q.w=w;q.hint=EX[d.id];q.tag='Endings · '+d.label}return q}).filter(Boolean)).filter(l=>l.length);
+  let k=0;const dr=[];while(dr.length<12&&lists.some(l=>l.length)){const l=lists[k%lists.length];if(l.length)dr.push(l.pop());k++}out.push(...dr);
+  shuffle(P.filter(r=>chs.includes(r[0]))).slice(0,5).forEach(([ch,s,a,o,en])=>{const i=s.indexOf('__'),end=i>0&&/\p{L}/u.test(s[i-1]);
+    out.push({kind:'mc',la:1,sent:s,end,prompt:'',opts:shuffle(o),answer:a,en,tag:'Fill the blank · Cap. '+RN[ch],hint:`It means: “${en}” Look at the word in front of the blank and think about its job in the sentence.`,explain:`<span class="full">${s.replace('__',a)}</span><br>${en}`})});
+  const cs=[];chs.forEach(c=>(PZ[c].C||[]).forEach(x=>cs.push([c,x])));
+  shuffle(cs).slice(0,TN-out.length).forEach(([c,[qq,aa]])=>{const others=PZ[c].C.map(x=>x[1]).filter(x=>x!==aa);
+    out.push({kind:'mc',la:1,prompt:`<span class="latin">${qq}</span><small>Pick the correct Latin answer · Cap. ${RN[c]}</small>`,opts:shuffle([aa,...shuffle(others).slice(0,3)]),answer:aa,tag:'Questions (Pēnsum C) · Cap. '+RN[c],hint:qwHint(qq),explain:`${qwHint(qq)}<br><span class="latin">${qq}</span> → <span class="latin">${aa}</span>`})});
+  return shuffle(out).slice(0,TN).map(q=>Object.assign(q,{tries:[],res:null}));
+}
+const TSTORE=()=>store.get('tests',[]);
+function tScoreLine(){const t=TSTORE();if(!t.length)return '';const last=t[t.length-1],best=Math.max(...t.map(x=>x.score));return `<p class="note">Last test: <b>${last.score} / 100</b> · Best: <b>${best} / 100</b> · ${t.length} ${t.length===1?'try':'tries'}</p>`}
+const tTime=ms=>{const s=Math.round(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+function tCheck(q,v){if(q.kind==='type'){return W.filter(x=>!x.hidden&&x.en===q.w.en).some(x=>plain(x.la)===plain(v))}return v===q.answer}
+function testHTML(){
+  const z=S.sess;
+  if(z.phase==='menu')return `<div class="result" style="text-align:left"><div class="verdict">Test practice · Probātiō</div>
+   <p>${TN} questions from ${selLabel()}: vocabulary, endings, fill-the-blank sentences, and Pēnsum C questions. Use the chapter buttons above to choose what the test covers.</p>${tScoreLine()}
+   <div class="row"><button class="btn primary grow" data-tact="startq">1. Practice quiz (with hints)</button></div>
+   <p class="note">A hint button on every question. A wrong answer gets a hint and one more try; after that you see the right answer with the explanation.</p>
+   <div class="row"><button class="btn good grow" data-tact="startt">2. Practice test (graded)</button></div>
+   <p class="note">Like the real test: 1 try each, no hints, timed, scored out of 100. Answers and explanations at the end.</p></div>`;
+  const it=z.items,n=it.length;
+  if(z.i>=n)return tResults();
+  const q=it[z.i],tst=z.phase==='test',done=q.res!==null,tries=q.tries.length,max=tst?1:2;
+  let prompt=q.prompt;
+  if(q.sent){const fill=done&&!tst?(q.end?'':'')+q.answer:' ';prompt=`<div class="tap">Fill in the blank</div><div class="sentence">${q.sent.replace('__',`<span class="blank">${fill}</span>`)}</div>`}
+  let body;
+  if(q.kind==='type'){
+    body=done?`<div class="typein"><input value="${esc(q.tries[q.tries.length-1]||'')}" disabled aria-label="Your answer"></div>`:
+    `<form class="typein" id="tform"><input id="ttyped" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="type here…" aria-label="Your answer"><button class="btn primary">${tst?'Save':'Check'}</button></form>
+     <div class="macrons">${'āēīōū'.split('').map(c=>`<button type="button" data-tmac="${c}">${c}</button>`).join('')}</div>`;
+  }else{
+    body=`<div class="opts">${q.opts.map((o,i)=>{let c='opt'+(q.la?' la':'');const tried=q.tries.includes(o);
+      if(done&&!tst){if(o===q.answer)c+=' right';else if(tried)c+=' wrong'}else if(tried&&!tst)c+=' wrong';
+      const lab=q.sent&&q.end?'-'+o:o;return `<button class="${c}" data-topt="${i}" ${done||tried?'disabled':''}><span class="k">${i+1}</span>${lab}</button>`}).join('')}</div>`;
+  }
+  let fb='';
+  if(!tst){
+    if(!done&&!tries)fb+=z.hint===z.i?`<div class="fb"><div class="v">💡 Hint</div><p>${q.hint}</p></div>`:`<div class="row"><button class="btn" data-tact="hint">💡 Show a hint</button></div>`;
+    if(!done&&tries)fb+=`<div class="fb no"><div class="v">Not yet — try once more.</div><p>💡 ${q.hint}</p></div>`;
+    if(done)fb+=`<div class="fb ${q.res==='right'?'ok':'no'}"><div class="v">${q.res==='right'?PRAISE[z.i%4]+(tries>1?' You fixed it!':' Correct.'):`Nōn rēctē. The answer is <span class="latin">${q.sent&&q.end?'-'+q.answer:q.answer}</span>.`}</div><p>${q.explain}</p></div>
+     <div class="row">${q.w?hearBtn(q.w.la):''}<button class="btn primary grow" data-tact="next" id="tnext">${z.i+1<n?'Next':'See score'} →</button></div>`;
+  }
+  return `<div class="meta"><span>${tst?'Practice test (graded)':'Practice quiz'} · question ${z.i+1} of ${n} · ${q.tag}</span><span>${tst?'⏱ no hints':'✓ '+it.filter(x=>x.res==='right').length}</span></div>
+  <div class="progress"><i style="width:${z.i/n*100}%"></i></div>
+  <div class="prompt">${prompt}</div>${body}${fb}
+  <div class="row"><button class="btn ghost" data-tact="menu">← Back to test menu</button></div>`;
+}
+function tResults(){
+  const z=S.sess,it=z.items,n=it.length,right=it.filter(x=>x.res==='right').length,first=it.filter(x=>x.res==='right'&&x.tries.length===1).length,tst=z.phase==='test';
+  const score=Math.round(100*(tst?right:first)/n);
+  if(!z.logged){z.logged=1;z.time=Date.now()-z.t0;logIt(tst?'test':'tquiz',tst?right:first,n);if(tst){const t=TSTORE();t.push({d:new Date().toISOString(),score,right,n,time:z.time,ch:S.sel.slice().sort()});if(t.length>100)t.splice(0,t.length-100);store.set('tests',t)}}
+  const miss=it.filter(x=>x.res!=='right'||(!tst&&x.tries.length>1));
+  return `<div class="result"><div class="score">${score} / 100</div><div class="verdict">${tst?(score>=90?'Optimē! Ready for the test!':score>=75?'Bene! Study the ones you missed, then try again.':'Iterum! Study the list below, do the practice quiz, then take the test again.'):`${first} of ${n} right on the first try`}</div>
+   <p class="note">Time: ${tTime(z.time)} · ${right} of ${n} right${tst?'':' in the end'}</p>${tst?tScoreLine():''}
+   ${miss.length?`<p style="margin-top:14px;color:var(--muted)">${tst?'Missed — study these:':'Needed a second try or missed:'}</p><ul class="missed">${miss.map(q=>`<li><small>${q.tag}</small><br>${q.sent?`<span class="latin">${q.sent.replace('__',q.end?q.answer:q.answer)}</span> — ${q.en}`:`${q.prompt.replace(/<small>.*<\/small>/,'')}<br>Answer: <b class="latin">${q.answer}</b>${q.tries.length?` · You said: ${esc(q.tries[0])}`:''}`}<br><span class="note">${q.hint}</span></li>`).join('')}</ul>`:'<p>Every question right. Optimē!</p>'}
+   <div class="row" style="justify-content:center"><button class="btn primary" data-tact="${tst?'startt':'startq'}">${tst?'Take the test again (new questions)':'Do the practice quiz again'}</button>${tst?'':'<button class="btn good" data-tact="startt">Take the graded test →</button>'}<button class="btn" data-tact="menu">Test menu</button></div></div>`;
+}
+function tAnswer(v){const z=S.sess,q=z.items[z.i];if(!q||q.res!==null)return;const tst=z.phase==='test',ok=tCheck(q,v);q.tries.push(v);
+  if(ok){q.res='right';addCoin()}else if(tst||q.tries.length>=2)q.res='missed';
+  if(q.w&&q.tag==='Vocabulary'&&q.res)setBox(q.w,q.res==='right'&&q.tries.length===1?box(q.w)+1:0);
+  if(tst)z.i++;render();const nx=$('#tnext');if(nx)nx.focus();else{const ti=$('#ttyped');if(ti)ti.focus()}}
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t||S.mode!=='test')return;const z=S.sess;
+  if(t.dataset.tact==='startq'||t.dataset.tact==='startt'){S.sess={phase:t.dataset.tact==='startq'?'quiz':'test',items:testItems(),i:0,t0:Date.now()};render();window.scrollTo(0,0)}
+  else if(t.dataset.tact==='menu'){S.sess={phase:'menu'};render()}
+  else if(t.dataset.tact==='hint'){z.hint=z.i;render()}
+  else if(t.dataset.tact==='next'){z.i++;render();window.scrollTo(0,0)}
+  else if(t.dataset.topt!==undefined){const q=z.items[z.i];tAnswer(q.opts[+t.dataset.topt])}
+  else if(t.dataset.tmac){const i=$('#ttyped');if(i){const p=i.selectionStart??i.value.length;i.value=i.value.slice(0,p)+t.dataset.tmac+i.value.slice(i.selectionEnd??p);i.focus();i.setSelectionRange(p+1,p+1)}}
+});
+document.addEventListener('submit',e=>{if(e.target.id==='tform'){e.preventDefault();const v=$('#ttyped').value.trim();if(v)tAnswer(v)}});
+document.addEventListener('keydown',e=>{if(S.mode!=='test'||e.target.tagName==='INPUT')return;const z=S.sess;if(!z||!z.items||z.i>=z.items.length)return;const q=z.items[z.i];
+  if(q.res===null&&q.kind==='mc'&&/^[1-4]$/.test(e.key)&&q.opts[+e.key-1]&&!q.tries.includes(q.opts[+e.key-1]))tAnswer(q.opts[+e.key-1]);
+  else if(q.res!==null&&e.key==='Enter'){e.preventDefault();z.i++;render()}});
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{
